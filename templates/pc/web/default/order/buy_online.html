@@ -1,0 +1,98 @@
+{template "header.html", "/"}
+<div class="page-container">
+    <div class="page-content-wrapper">
+        <div class="page-content">
+            <div class="container">
+
+                <ul class="page-breadcrumb breadcrumb">
+                    <li>
+                        <a href="{SITE_URL}">首页</a>
+                        <i class="fa fa-circle"></i>
+                    </li>
+                    <li>
+                        <a href="{dr_url('order/cart/index')}">购物车</a>
+                        <i class="fa fa-circle"></i>
+                    </li>
+                    <li>
+                        <span>收银台</span>
+                    </li>
+                </ul>
+
+                <form action="" id="myform" method="post">
+                    <input name="pay" type="hidden" value="1">
+                    <div class="page-content-inner">
+
+
+                        <div class="portlet light">
+                            <div class="portlet-title">
+                                <div class="caption">订单信息</div>
+                                <div class="actions">
+                                </div>
+                            </div>
+                            <div class="portlet-body">
+                                {loop $orders $t}
+                                <p>
+                                    <label>订单号：{$t.sn}</label>&nbsp;&nbsp;
+                                    {if $t.order_score}
+                                    <label>{SITE_SCORE}：{intval($t.order_price)}</label>
+                                    {else}
+                                    <label>金额：¥{number_format($t.order_price, 2)}元</label>
+                                    {/if}
+                                </p>
+                                {/loop}
+                            </div>
+                            <div class="portlet-body">
+                                订单总额：￥<span>{number_format($price, 2)}</span>元 + <span>{intval($score)}</span>{SITE_SCORE}
+                            </div>
+                        </div>
+
+                        <div class="portlet light">
+                            <div class="portlet-title">
+                                <div class="caption">在线支付</div>
+                                <div class="actions">
+                                </div>
+                            </div>
+                            <div class="portlet-body">
+
+                                <div class="form-group">
+                                    <div class="radio-list">
+                                        <label style="margin-bottom: 20px">
+                                            <input type="radio" name="pay" {if $pay_price > 0}disabled{else}checked{/if} type="radio"  value="yu">
+                                            {if $pay_price > 0}
+                                            余额不足，当前余额 ￥{number_format($member.money, 2)}，{SITE_SCORE}{$member.score}，请<a href="{dr_member_url('pay/add')}&money={$pay_price}" target="_blank">充值</a>
+                                            {else}
+                                            使用余额付款，当前余额 ￥{number_format($member.money, 2)}元，{SITE_SCORE}{$member.score}。
+                                            {/if}</b>
+                                        </label>
+                                        {if $pay_price > 0}
+                                        {php $pay=@reset($pay_list);}
+                                        {/if}
+                                        {loop $pay_list $name $t}
+                                        <label>
+                                            <input class="dr_pay_select" name="pay" type="radio" {if $t.name==$pay.name} checked="checked"{/if} value="{$name}" />
+                                            <img alt="{$t.name}" title="{$t.name}" src="{SITE_URL}api/pay/{$name}/logo.png" width="100" height="35" />
+                                        </label>
+                                        {/loop}
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="portlet-body">
+                                <button type="submit" class="btn green"> <i class="fa fa-rmb"></i>
+                                    立即付款<b></b>
+                                </button>
+                            </div>
+                        </div>
+
+
+
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{template "footer.html"}

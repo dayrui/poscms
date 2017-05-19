@@ -1,0 +1,15 @@
+{loop $vlist $t}
+<tr>
+    <td><a href="{$t.url}" target="_blank">v{$t.title}</a></td>
+    <td>{dr_date($t.updatetime)}</td>
+    <td class="dr_option">
+        {if $nid==$t.id}
+            <a class="aedit" href="http://www1.dayrui.com/index.php?c=fc&m=update&id={$t.id}&url={urlencode(ADMIN_URL.dr_url('upgrade/update'))}">{fc_lang('在线升级')}</a>
+        {/if}
+        <a class="aadd" href="http://www1.dayrui.com/index.php?c=sys&m=bdb&id={$t.id}" target="_blank">{fc_lang('补丁包下载')}</a>
+        {if $nid-1==$t.id && is_dir(WEBPATH.'cache/backup/'.$t.id.'/')}
+        <a class="aadd" href="javascript:dr_hf('{$t.id}');">{fc_lang('恢复此版本')}</a>
+        {/if}
+    </td>
+</tr>
+{/loop}

@@ -1,0 +1,132 @@
+{template "header.html", "/"}
+
+<div class="page-container">
+    <div class="page-content-wrapper">
+        {template "header.html"}
+        <div class="page-content ">
+            <div class="container">
+
+                <ul class="page-breadcrumb breadcrumb">
+                    <li>
+                        <a href="{SITE_URL}">首页</a>
+                        <i class="fa fa-circle"></i>
+                    </li>
+                    <li>
+                        <a href="{MODULE_URL}">{MODULE_NAME}</a>
+                        <i class="fa fa-circle"></i>
+                    </li>
+                    {dr_catpos($catid, '', true, '<li><a href="{url}">{name}</a><i class="fa fa-circle"></i></li>')}
+                    <li>
+                        <span>主题列表</span>
+                    </li>
+                </ul>
+
+                <div class="page-content-inner wbbs_list_zt">
+                    <div class="search-page search-content-2">
+
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="portlet light">
+                                    <div class="portlet-title">
+                                        <div class="caption">
+                                            <span class="caption-subject font-green-sharp">{$cat.name}</span>
+                                        </div>
+
+                                        <div class="actions">
+                                            <a href="{dr_member_url(MOD_DIR.'/home/add', array('catid'=>$catid))}" class="btn btn-sm green"><i class="fa fa-plus-square"></i> 我要发贴</a>
+                                        </div>
+                                    </div>
+                                    <div class="portlet-body">
+
+                                        <div class="thread_posts_list" style="padding-bottom: 0">
+                                            <table width="100%">
+                                                <tbody>
+                                                <!--调用全局置顶的内容-->
+                                                {list action=module isflag=2}
+                                                <tr>
+                                                    <td class="author"><a class="J_user_card_show" data-uid="1048799" href="javascript:;"><img class="J_avatar" src="{dr_avatar($t.uid)}" data-type="small" width="45" height="45" alt="{$t.author}"></a></td>
+                                                    <td class="subject">
+                                                        <p class="title">
+                                                            <a href="{$t.url}" class="st"  {if $t.color}style="color:{$t.color} !important"{/if} >【顶】{$t.title}</a></p>
+                                                        <p class="info">
+                                                            楼主：<a class="J_user_card_show" data-uid="1048799" href="javascript:;">{$t.author}</a><span>{$t.inputtime}</span>
+                                                            最后回复：<span><a rel="nofollow" href="{$t.url}">{$t.updatetime}</a></span>
+                                                        </p>
+                                                    </td>
+                                                    <td class="num">
+                                                        <span>回复<em>{intval($t.comments)}</em></span>
+                                                        <span>浏览<em>{intval($t.hits)}</em></span>
+                                                    </td>
+                                                </tr>
+                                                {/list}
+                                                <!--调用本版块置顶的内容-->
+                                                {list action=module catid=$catid isflag=1}
+                                                <tr>
+                                                    <td class="author"><a class="J_user_card_show" data-uid="1048799" href="javascript:;"><img class="J_avatar" src="{dr_avatar($t.uid)}" data-type="small" width="45" height="45" alt="{$t.author}"></a></td>
+                                                    <td class="subject">
+                                                        <p class="title">
+                                                            <a href="{$t.url}" class="st"  {if $t.color}style="color:{$t.color} !important"{/if} >【顶】{$t.title}</a></p>
+                                                        <p class="info">
+                                                            楼主：<a class="J_user_card_show" data-uid="1048799" href="javascript:;">{$t.author}</a><span>{$t.inputtime}</span>
+                                                            最后回复：<span><a rel="nofollow" href="{$t.url}">{$t.updatetime}</a></span>
+                                                        </p>
+                                                    </td>
+                                                    <td class="num">
+                                                        <span>回复<em>{intval($t.comments)}</em></span>
+                                                        <span>浏览<em>{intval($t.hits)}</em></span>
+                                                    </td>
+                                                </tr>
+                                                {/list}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="thread_posts_list pt">
+                                            普通贴
+                                        </div>
+                                        <div class="thread_posts_list">
+                                            <table width="100%">
+                                                <tbody>
+                                                {list action=module catid=$catid isflag=0 page=1}
+                                                <tr>
+                                                    <td class="author"><a class="J_user_card_show" data-uid="1048799" href="javascript:;"><img class="J_avatar" src="{dr_avatar($t.uid)}" data-type="small" width="45" height="45" alt="{$t.author}"></a></td>
+                                                    <td class="subject">
+                                                        <p class="title">
+                                                            <a href="{$t.url}" class="st"  {if $t.color}style="color:{$t.color} !important"{/if} >{$t.title}</a></p>
+                                                        <p class="info">
+                                                            楼主：<a class="J_user_card_show" data-uid="1048799" href="javascript:;">{$t.author}</a><span>{$t.inputtime}</span>
+                                                            最后回复：<span><a rel="nofollow" href="{$t.url}">{$t.updatetime}</a></span>
+                                                        </p>
+                                                    </td>
+                                                    <td class="num">
+                                                        <span>回复<em>{intval($t.comments)}</em></span>
+                                                        <span>浏览<em>{intval($t.hits)}</em></span>
+                                                    </td>
+                                                </tr>
+                                                {/list}
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <div class="row" style="margin:0; text-align:center">
+                                            <ul class="pagination">{$pages}</ul></div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{template "footer.html", "/"}

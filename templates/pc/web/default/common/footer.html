@@ -1,0 +1,110 @@
+<!-- BEGIN FOOTER -->
+<!-- BEGIN PRE-FOOTER -->
+<div class="page-prefooter">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 col-sm-6 col-xs-12 footer-block">
+                <h2>FineCMS高级版</h2>
+                <p> 采用PHP5+MYSQL做为技术基础、以CI3.0框架为核心，提供“PC网站＋手机网站”一体化网站技术解决方案。</p>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs12 footer-block">
+                <h2>全站搜索</h2>
+                <div class="subscribe-form">
+                    <form class="search-form" method="get" target="_blank" action="{SITE_URL}index.php">
+                        <input name="c" type="hidden" value="so">
+                        <input name="module" type="hidden" value="{MOD_DIR}">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="输入搜索关键字" name="keyword">
+                            <span class="input-group-btn">
+                                        <button class="btn" type="submit">搜索</button>
+                                    </span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12 footer-block">
+                <h2>分享我们</h2>
+                <div class="social-icons">
+                    <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a><a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a><a href="#" class="bds_mail" data-cmd="mail" title="分享到邮件分享"></a></div>
+                    <script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12 footer-block">
+                <h2>联系我们</h2>
+                <address class="margin-bottom-40"> 电话: 028-62562781
+                    <br> 邮箱:
+                    <a href="mailto:q@dayrui.com">q@dayrui.com</a>
+                </address>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END PRE-FOOTER -->
+<!-- BEGIN INNER FOOTER -->
+<div class="page-footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                {DR_NAME} v{DR_VERSION}
+
+                <a href="javascript:dr_goto_pc();">电脑版</a> | <a href="javascript:dr_goto_mobile();">手机版</a>
+            </div>
+            {if IS_PC}
+            <div class="col-md-9 text-right">
+                {list action=navigator type=3}
+                <a {if $key>=$count-1}style="border:none"{/if} href="{$t.url}" title="{$t.title}" {if $t.target}target="_blank"{/if}>{$t.name}</a>
+                {/list}
+            </div>
+            {/if}
+        </div>
+
+    </div>
+</div>
+<div class="scroll-to-top">
+    <i class="icon-arrow-up"></i>
+</div>
+<!-- END INNER FOOTER -->
+<!-- END FOOTER -->
+</body>
+<script type="text/javascript" src="{THEME_PATH}js/jquery.cookie.js"></script>
+<script type="application/javascript">
+    $(function(){
+        var MobileUA = (function() {
+            var ua = navigator.userAgent.toLowerCase();
+            var mua = {
+                IOS: /ipod|iphone|ipad/.test(ua), //iOS
+                IPHONE: /iphone/.test(ua), //iPhone
+                IPAD: /ipad/.test(ua), //iPad
+                ANDROID: /android/.test(ua), //Android Device
+                WINDOWS: /windows/.test(ua), //Windows Device
+                TOUCH_DEVICE: ('ontouchstart' in window) || /touch/.test(ua), //Touch Device
+                MOBILE: /mobile/.test(ua), //Mobile Device (iPad)
+                ANDROID_TABLET: false, //Android Tablet
+                WINDOWS_TABLET: false, //Windows Tablet
+                TABLET: false, //Tablet (iPad, Android, Windows)
+                SMART_PHONE: false //Smart Phone (iPhone, Android)
+            };
+            mua.ANDROID_TABLET = mua.ANDROID && !mua.MOBILE;
+            mua.WINDOWS_TABLET = mua.WINDOWS && /tablet/.test(ua);
+            mua.TABLET = mua.IPAD || mua.ANDROID_TABLET || mua.WINDOWS_TABLET;
+            mua.SMART_PHONE = mua.MOBILE && !mua.TABLET;
+            return mua;
+        }());
+        //SmartPhone
+        if (MobileUA.SMART_PHONE && !$.cookie('finecms_my_test_code')) {
+            // 移动端链接地址
+            document.location.href = '{SITE_MURL}';
+        }
+    });
+    // 切换手机端
+    function dr_goto_mobile() {
+        $.cookie('finecms_my_test_code', '1',{expires: 7, path: '/', domain: '这里填写你网站的域名例如finecms.net,否则不会生效'});
+        document.location.href = '{SITE_MURL}';
+    }
+    // 切换电脑端
+    function dr_goto_pc() {
+        $.cookie('finecms_my_test_code', '1',{expires: 7, path: '/', domain: '这里填写你网站的域名例如finecms.net,否则不会生效'});
+        document.location.href = '{SITE_PC}';
+    }
+</script>
+</html>

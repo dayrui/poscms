@@ -1,0 +1,60 @@
+{loop $list $t}
+<div class="portlet box green">
+    <div class="portlet-title">
+        <div class="tools" style="float: left">
+            <label><i class="fa fa-calendar"></i> {dr_date($t.order_time, '', '')}</label>
+            {if $ci->mconfig['config']['otime'] && $t.order_status==1}
+            <span class="order-otime">订单将于{dr_date($t.order_time+$ci->mconfig['config']['otime']*3600)}失效，请尽快付款</span>
+            {else}
+            <a href="{dr_member_url('order/home/info', array('id'=>$t.id))}" style="color: #fff">订单号：{$t.sn}</a>
+            {/if}
+        </div>
+        <div class="tools">
+            <a href="javascript:;" class="collapse" data-original-title="开启/隐藏"> </a>
+        </div>
+    </div>
+    <div class="portlet-body dr_order">
+        <div class="row">
+            <div class="col-md-6">
+                {loop $t.goods $ii $g}
+                <div class="media">
+                    <a class="pull-left" href="javascript:;">
+                        <img src="{dr_thumb($g.thumb, 55, 55)}" width="55" height="55">
+                    </a>
+                    <div class="media-body">
+                        <h5 class="media-heading"><a href="{$g.url}" target="_blank">{$g.title}</a></h5>
+                        <?php $sku=dr_string2array($g.sku);?>
+                        {loop $sku $s $u}
+                        <lable>{$s}：{$u}&nbsp;&nbsp;</lable>
+                        {/loop}
+                        <p>x{$g.quantity}</p>
+                    </div>
+                </div>
+                {/loop}
+            </div>
+            {if IS_MOBILE}
+            <div class="col-md-4">
+                <p>
+                    <lable>{$t.shipping_name}（{$t.shipping_phone}）</lable>
+                    <lable><strong>{if $t.order_score}{intval($t.order_price)}{SITE_SCORE}{else}¥{number_format($t.order_price, 2)}{/if}</strong></lable>
+                    <lable>{if $paytype[$t.pay_type]}{$paytype[$t.pay_type]['name']}{else}未知{/if}</lable>
+                </p>
+            </div>
+            {else}
+            <div class="col-md-2">
+                <p>{$t.shipping_name}</p>
+                <p>{$t.shipping_phone}</p>
+            </div>
+            <div class="col-md-2">
+                <p><strong>{if $t.order_score}{intval($t.order_price)}{SITE_SCORE}{else}¥{number_format($t.order_price, 2)}{/if}</strong></p>
+                <p>{if $paytype[$t.pay_type]}{$paytype[$t.pay_type]['name']}{else}未知{/if}</p>
+            </div>
+            {/if}
+            <div class="col-md-2 dr_info">
+                {dr_order_member_option($member.uid, $t)}
+                <p><a href="{dr_member_url('order/home/info', array('id'=>$t.id))}" class="btn blue btn-xs"> <i class="fa fa-shopping-cart"></i> 订单详情</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{/loop}

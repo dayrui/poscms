@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8" />
+    <title>admin</title>
+    <script type="text/javascript">var siteurl = "{SITE_PATH}{SELF}";var memberpath = "{MEMBER_PATH}";</script>
+    <script type="text/javascript" src="{THEME_PATH}js/{SITE_LANGUAGE}.js"></script>
+    <script type="text/javascript" src="{THEME_PATH}js/jquery.min.js"></script>
+    <script type="text/javascript" src="{THEME_PATH}js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="{THEME_PATH}js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="{THEME_PATH}js/jquery.artDialog.js?skin=default"></script>
+    <script type="text/javascript" src="{THEME_PATH}js/validate.js"></script>
+    <script type="text/javascript" src="{THEME_PATH}js/admin.js"></script>
+    <script type="text/javascript" src="{THEME_PATH}js/dayrui.js"></script>
+</head>
+<body {if IS_PC}style="max-height:400px;width:500px;overflow-x:hidden;overflow-y:auto"{/if}>
+<script type="text/javascript">
+    $(function() { //防止回车提交表单
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if (ev.keyCode==13) {
+                $("#mark").val("1"); // 标识不能提交表单
+            }
+        }
+        $(".table_form th").last().css('border','none');
+        $(".table_form td").last().css('border','none');
+    });
+    function dr_form_check() {
+        if ($("#mark").val() == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+</script>
+<div class="table-list" style="overflow: hidden">
+    <form action="" method="post" id="myform" name="myform" onsubmit="return dr_form_check()">
+        {if IS_PC}
+        <link href="{THEME_PATH}admin/css/index.css" rel="stylesheet" type="text/css" />
+        <link href="{THEME_PATH}admin/css/table_form.css" rel="stylesheet" type="text/css" />
+        <table width="100%" class="table_form">
+            <tr>
+                <th width="100"><font color="red">*</font>&nbsp;城市： </th>
+                <td>{dr_field_input('city', 'Linkage', array('option' => array('linkage' => 'address'),'validate' => array('required' => 1 )), $data['city'])}</td>
+            </tr>
+            <tr>
+                <th><font color="#FF0000">*</font>&nbsp;姓名：</th>
+                <td><input type="text" id="dr_name" name="data[name]" value="{$data.name}" required="required" style="width:150px" class="input_text" /></td>
+            </tr>
+            <tr>
+                <th><font color="#FF0000">*</font>&nbsp;电话：</th>
+                <td><input type="text" id="dr_phone" name="data[phone]" value="{$data.phone}" required="required" style="width:200px" class="input_text" /></td>
+            </tr>
+            <tr>
+                <th><font color="#FF0000">*</font>&nbsp;邮编：</th>
+                <td><input type="text" id="dr_zipcode" name="data[zipcode]" value="{$data.zipcode}" required="required" style="width:200px" class="input_text" /></td>
+            </tr>
+            <tr>
+                <th><font color="#FF0000">*</font>&nbsp;地址：</th>
+                <td><input type="text" id="dr_address" name="data[address]" value="{$data.address}" required="required" style="width:350px" class="input_text" /></td>
+            </tr>
+        </table>
+        {else}
+        <link href="{THEME_PATH}admin/css/table_form.css" rel="stylesheet" type="text/css" />
+        <table width="100%" class="table_form">
+            <tr>
+                <td>{dr_field_input('city', 'Linkage', array('option' => array('linkage' => 'address'),'validate' => array('required' => 1 )), $data['city'])}</td>
+            </tr>
+            <tr>
+                <td><input type="text" placeholder="姓名" id="dr_name" name="data[name]" value="{$data.name}" required="required" class="input_text" /></td>
+            </tr>
+            <tr>
+                <td><input type="text" placeholder="电话" id="dr_phone" name="data[phone]" value="{$data.phone}" required="required"  class="input_text" /></td>
+            </tr>
+            <tr>
+                <td><input type="text" placeholder="邮编" id="dr_zipcode" name="data[zipcode]" value="{$data.zipcode}" required="required" class="input_text" /></td>
+            </tr>
+            <tr>
+                <td><input type="text" placeholder="地址" id="dr_address" name="data[address]" value="{$data.address}" required="required"  class="input_text" /></td>
+            </tr>
+        </table>
+        {/if}
+    </form>
+</div>
+</body>
+</html>

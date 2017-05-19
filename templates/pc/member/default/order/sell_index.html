@@ -1,0 +1,116 @@
+{template order_header.html}
+<script type="text/javascript">
+	$(function(){
+		$("#dr_loadmore").click(function(){
+			var page = $("#dr_page").val();
+			$("#dr_loadmore").html('<img src="{MEMBER_THEME_PATH}loading.gif">');
+			$.get("{$moreurl}", {page:page}, function(data){
+				if (data != "null") {
+					$("#dr_body").append(data);
+					$("#dr_page").val(Number(page) + 1);
+					$("#dr_loadmore").html('<i class="fa fa-refresh"></i> 加载更多');
+				} else {
+					$("#dr_loadmore_html").hide();
+				}
+			});
+		});
+		// 排序操作
+		$('.dr_table th').click(function(e) {
+			var _class = $(this).attr("class");
+			if (_class == undefined) return;
+			var _name = $(this).attr("name");
+			var _order = '';
+			if (_class == "sorting") {
+				_order = 'desc';
+			} else if (_class == "sorting_desc") {
+				_order = 'asc';
+			} else {
+				_order = 'desc';
+			}
+			var url = "{dr_member_order($moreurl)}&order="+_name+" "+_order;
+			location.href=url;
+		});
+	});
+</script>
+<input name="page" id="dr_page" type="hidden" value="{$page}" />
+<div class="row">
+	<div class="col-md-12">
+
+		<div class="portlet-body">
+			<div class="table-toolbar">
+				<form method="get" action="">
+					<input name="s" type="hidden" value="member" />
+					<input name="mod" type="hidden" value="order" />
+					<input name="c" type="hidden" value="sell" />
+					<input name="m" type="hidden" value="{$get.m}" />
+					<input id="dr_order" name="order" type="hidden" value="{$get.order}" />
+					<div class="row">
+						<div class="col-md-2 col-sm-2 hidden-480">
+							<label><select name="field" class="form-control">
+								<option value=""> -- </option>
+								{loop $field $i $t}
+								<option value="{$i}" {if $param.field==$i}selected{/if}>{$t}</option>
+								{/loop}
+							</select></label>
+						</div>
+						<div class="col-md-4 col-sm-4">
+							<label>
+								<div class="input-group">
+									<input type="text" class="form-control" id="dr_keywords" name="kw" value="{$param.kw}" placeholder="输入订单号">
+									<span class="input-group-btn">
+										<button class="btn green mysubmit" type="submit"><i class="fa fa-search"></i> 搜索</button>
+									</span>
+								</div>
+							</label>
+						</div>
+
+					</div>
+				</form>
+			</div>
+
+			<form action="" method="post" name="myform" id="myform">
+				<input name="action" id="action" type="hidden" value="" />
+				<table class="table dr_table">
+					<thead>
+					<tr>
+						<th></th>
+						<th class="{ns_sorting('id')}" name="id" width="160">{fc_lang('订单号')}</th>
+						<th class="{ns_sorting('buy_uid')}" name="buy_uid" width="90">{fc_lang('买家')}</th>
+						<th class="{ns_sorting('order_price')}" name="order_price">{fc_lang('价格')}</th>
+						<th class="{ns_sorting('order_time')}" name="order_time" width="150">{fc_lang('下单时间')}</th>
+						<th class="{ns_sorting('status')}" name="status">{fc_lang('状态')}</th>
+						<th></th>
+					</tr>
+					</thead>
+					<tbody id="dr_body">
+					{template "sell_data.html"}
+					</tbody>
+					<tr>
+						<th width="20"><input name="dr_select" class="toggle md-check" id="dr_select" type="checkbox" onClick="dr_selected()" /></th>
+						<td colspan="99">
+							<label><button type="submit" class="btn blue btn-sm" name="option" onClick="$('#myform').attr('target', '_blank');$('#action').val('print');"> <i class="fa fa-print"></i>  {fc_lang('打印订单')}</button></label>
+
+						</td>
+					</tr>
+				</table>
+
+			</form>
+
+
+
+
+		</div>
+
+
+	</div>
+</div>
+
+
+<div class="row" id="dr_loadmore_html" style="margin-top:20px">
+	<div class="col-md-offset-4 col-md-4 text-center">
+		<a href="javascript:;" class="btn default btn-block" id="dr_loadmore"> <i class="fa fa-refresh"></i> 加载更多 </a>
+	</div>
+</div>
+
+
+{template nfooter.html}
