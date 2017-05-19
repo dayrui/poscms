@@ -1,0 +1,61 @@
+
+<!-- BEGIN INNER FOOTER -->
+<div class="page-footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <p><a style="color:#fff" href="javascript:dr_goto_pc();">电脑版</a> | <a style="color:#fff" href="javascript:dr_goto_mobile();">手机版</a></p>
+                <p>{DR_NAME} v{DR_VERSION}</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="scroll-to-top">
+    <i class="icon-arrow-up"></i>
+</div>
+<!-- END INNER FOOTER -->
+<!-- END FOOTER -->
+</body>
+<script type="text/javascript" src="{THEME_PATH}js/jquery.cookie.js"></script>
+<script type="application/javascript">
+    $(function(){
+        var MobileUA = (function() {
+            var ua = navigator.userAgent.toLowerCase();
+            var mua = {
+                IOS: /ipod|iphone|ipad/.test(ua), //iOS
+                IPHONE: /iphone/.test(ua), //iPhone
+                IPAD: /ipad/.test(ua), //iPad
+                ANDROID: /android/.test(ua), //Android Device
+                WINDOWS: /windows/.test(ua), //Windows Device
+                TOUCH_DEVICE: ('ontouchstart' in window) || /touch/.test(ua), //Touch Device
+                MOBILE: /mobile/.test(ua), //Mobile Device (iPad)
+                ANDROID_TABLET: false, //Android Tablet
+                WINDOWS_TABLET: false, //Windows Tablet
+                TABLET: false, //Tablet (iPad, Android, Windows)
+                SMART_PHONE: false //Smart Phone (iPhone, Android)
+            };
+            mua.ANDROID_TABLET = mua.ANDROID && !mua.MOBILE;
+            mua.WINDOWS_TABLET = mua.WINDOWS && /tablet/.test(ua);
+            mua.TABLET = mua.IPAD || mua.ANDROID_TABLET || mua.WINDOWS_TABLET;
+            mua.SMART_PHONE = mua.MOBILE && !mua.TABLET;
+            return mua;
+        }());
+        //SmartPhone
+        if (!MobileUA.SMART_PHONE && !$.cookie('finecms_my_test_code')) {
+            // 电脑链接地址
+           document.location.href = '{SITE_PC}';
+        }
+    });
+    // 切换手机端
+    function dr_goto_mobile() {
+        $.cookie('finecms_my_test_code', '1', {expires: 7, path: '/', domain: '这里填写你网站的域名例如finecms.net,否则不会生效'});
+        document.location.href = '{SITE_MURL}';
+    }
+    // 切换电脑端
+    function dr_goto_pc() {
+        $.cookie('finecms_my_test_code', '1',{expires: 7, path: '/', domain: '这里填写你网站的域名例如finecms.net,否则不会生效'});
+        document.location.href = '{SITE_PC}';
+    }
+</script>
+</html>

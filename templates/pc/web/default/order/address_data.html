@@ -1,0 +1,54 @@
+<input id="dr_shipping_id" type="hidden" value="{$default.id}" />
+<input id="dr_shipping_city" name="data[shipping_city]" type="hidden" value="{$default.city}" />
+<input id="dr_shipping_name" name="data[shipping_name]" type="hidden" value="{$default.name}" />
+<input id="dr_shipping_phone" name="data[shipping_phone]" type="hidden" value="{$default.phone}" />
+<input id="dr_shipping_zipcode" name="data[shipping_zipcode]" type="hidden" value="{$default.zipcode}" />
+<input id="dr_shipping_address" name="data[shipping_address]" type="hidden" value="{$default.address}" />
+<script type="text/javascript">
+    $(function(){
+        $(".ui-switchable-panel").mouseenter(function(){
+            $(this).addClass("li-hover");
+        }).mouseleave(function(){
+            $(this).removeClass("li-hover");
+        });
+        $(".consignee-item").click(function(){
+            var id = $(this).attr("aid");
+            $(".consignee-item").removeClass("done");
+            $(".consignee-item").html('<i class="fa fa-circle-o"></i>');
+            $("#dr_address_li_"+id).addClass("done");
+            $("#dr_address_li_"+id).html('<i class="fa fa-dot-circle-o"></i>');
+            // 赋值
+            $("#dr_shipping_city").val($("#dr_shipping_city_"+id).val());
+            $("#dr_shipping_name").val($("#dr_shipping_name_"+id).val());
+            $("#dr_shipping_phone").val($("#dr_shipping_phone_"+id).val());
+            $("#dr_shipping_zipcode").val($("#dr_shipping_zipcode_"+id).val());
+            $("#dr_shipping_address").val($("#dr_shipping_address_"+id).val());
+            // 当前默认
+            $("#dr_shipping_id").val(id);
+			// 重新计算运费和订单总额
+			dr_get_order_price();
+        });
+    });
+</script>
+{loop $list $i $t}
+<li class="mt-list-item" id="dr_address_div_{$t.id}" style="{if $i == count($list) -1}border:none;{else}border-bottom:1px dashed #eee{/if}">
+    <input id="dr_shipping_city_{$t.id}" type="hidden" value="{$t.city}" />
+    <input id="dr_shipping_name_{$t.id}" type="hidden" value="{$t.name}" />
+    <input id="dr_shipping_phone_{$t.id}" type="hidden" value="{$t.phone}" />
+    <input id="dr_shipping_zipcode_{$t.id}" type="hidden" value="{$t.zipcode}" />
+    <input id="dr_shipping_address_{$t.id}" type="hidden" value="{$t.address}" />
+    <div aid="{$t.id}" id="dr_address_li_{$t.id}" class="consignee-item list-icon-container {if $t.id==$default.id} done{/if}" style="cursor: pointer">
+        {if $t.id==$default.id}<i class="fa fa-dot-circle-o"></i> {else}<i class="fa fa-circle-o"></i>{/if}
+    </div>
+    <div class="list-datetime" style="width: auto !important;">
+        <a href="javascript:;" onclick="dr_edit_address('{$t.id}')" class="btn green btn-xs" ><i class="fa fa-edit"></i> 编辑</a>
+        {if !$is_guest}<a href="javascript:;" onclick="dr_del_address('{$t.id}')" class="btn red-mint btn-xs" ><i class="fa fa-trash-o"></i> 删除</a><br>{/if}
+        {if !$is_guest}<a href="javascript:;" onclick="dr_set_address('{$t.id}')" style="margin-top: 10px" class="btn blue btn-xs" ><i class="fa fa-dot-circle-o"></i> 设为默认</a>{/if}
+    </div>
+    <div class="list-item-content" style="padding-left:30px">
+        {$t.name}<br>
+        {$t.phone}<br>
+    </div>
+    <div style="padding-left:30px">{dr_linkagepos('address', $t.city, ' ', NULL)} {$t.address}</div>
+</li>
+{/loop}

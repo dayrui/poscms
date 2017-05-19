@@ -1,0 +1,12 @@
+使用手册：http://www.poscms.net/help-doc/
+开发手册：http://www.poscms.net/dev-doc/
+
+运行环境：
+php5.3 - php7
+mysql5以上
+
+安装方法：
+访问http://网站/install.php
+
+
+此版本正在处于开发阶段，仅供学习使用

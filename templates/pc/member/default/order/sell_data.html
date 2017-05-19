@@ -1,0 +1,17 @@
+{loop $list $t}
+<tr>
+    <td><input name="ids[]" type="checkbox" class="dr_select toggle md-check" value="{$t.id}" /></td>
+
+    <td><a href="{dr_member_url('order/sell/info', array('id'=>$t.id))}">{$t.sn}</a></td>
+
+    <td>{dr_strcut($t.buy_username, 10)}</td>
+
+    <td>{if $t.order_score}{intval($t.order_price)}{SITE_SCORE}{else}¥{number_format($t.order_price, 2)}{/if}</td>
+    <td>{dr_date($t.order_time, '', 'red')}</td>
+    <td>{dr_order_status($t)}</td>
+    <td class="order_p">
+        {dr_order_member_option($t.sell_uid, $t)}
+        <p><a href="{dr_member_url('order/sell/info', array('id'=>$t.id))}" class="btn blue btn-xs"> <i class="fa fa-shopping-cart"></i> {fc_lang('订单详情')}</a></p>
+    </td>
+</tr>
+{/loop}

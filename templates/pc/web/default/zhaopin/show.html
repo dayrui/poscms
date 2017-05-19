@@ -1,0 +1,158 @@
+{template "header.html", "/"}
+
+<script type="text/javascript" src="{THEME_PATH}js/layer/layer.js"></script>
+<script language="javascript">
+    // 这是加入收藏夹的ajax请求，我就随意写了一下提示信息，至于美化啊什么交给你们了
+    function dr_favorite() {
+        $.get("/index.php?s={MOD_DIR}&c=api&m=favorite&id={$id}", function(data){
+            if (data == 1) {
+                dr_tips("没有登录，不能收藏");
+            } else if (data == 2) {
+                dr_tips("文档不存在，无法收藏");
+            } else if (data == 3) {
+                dr_tips("更新收藏成功", 3, 1);
+            } else if (data == 4) {
+                dr_tips("收藏成功", 3, 1);
+            }
+        });
+    }
+    function dr_toudi() {
+
+        layer.open({
+            type: 2,
+            title: '投递简历',
+            fix:true,
+            scrollbar: false,
+            shadeClose: true,
+            shade: 0,
+            area: ['500px', '300px'],
+            btn: ['确认'],
+            yes: function(index, layero){
+
+                var body = layer.getChildFrame('body', index);
+                $.ajax({type: "POST",dataType:"json", url: '/index.php?s={MOD_DIR}&c=api&m=toudi_jianli&id={$id}&is_ajax=1', data: $(body).find('#myform').serialize(),
+                    success: function(json) {
+                        if (json.code == 1) {
+                            dr_tips(json.msg,3,1);
+                        } else {
+                            dr_tips(json.msg);
+                        }
+                        return false;
+                    },
+                    error: function(HttpRequest, ajaxOptions, thrownError) {
+                        alert(HttpRequest.responseText);
+                    }
+                });
+                return false;
+            },
+            content: '/index.php?s={MOD_DIR}&c=api&m=toudi&id={$id}&is_ajax=1'
+        });
+    }
+</script>
+<div class="page-container">
+    <div class="page-content-wrapper">
+        {template "header.html"}
+        <div class="page-content">
+            <div class="container">
+
+                <ul class="page-breadcrumb breadcrumb">
+                    <li>
+                        <a href="{SITE_URL}">首页</a>
+                        <i class="fa fa-circle"></i>
+                    </li>
+                    <li>
+                        <a href="{MODULE_URL}">{MODULE_NAME}</a>
+                        <i class="fa fa-circle"></i>
+                    </li>
+                    {dr_catpos($catid, '', true, '<li><a href="{url}">{name}</a><i class="fa fa-circle"></i></li>')}
+                    <li>
+                        <span>{$title}</span>
+                    </li>
+                </ul>
+
+                <div class="page-content-inner">
+                    <div class="search-page search-content-2">
+                        <div class="row">
+                            <div class="col-md-12">
+
+                                <div class="portlet light">
+                                    <div class="portlet-title">
+                                        <div class="caption">
+                                            <span class="caption-subject font-blue  ">{$title}</span>
+                                        </div>
+                                    </div>
+                                    <div class="portlet-body">
+
+                                        <p style="color:#9eacb4">{$description}</p>
+                                        <div class="row">
+
+                                            <div class="col-md-4">
+                                                {dr_baidu_map($ditubiaozhu, 17, '100%', '200')}
+                                            </div>
+
+                                            <div class="col-md-8">
+                                                <ul class="list-unstyled fc-list-row">
+                                                    <li><strong> 行业类型：</strong> {$cat.name}</li>
+                                                    <li><strong> 访问人数：</strong> <span id="dr_hits_show_{$id}">{$hits}</span> {php $todo_jscript = dr_show_hits($id, 'dr_hits_show_'.$id);}</li>
+                                                    <li><strong> 更新时间：</strong> {$updatetime}</li>
+                                                    <li><strong> 招聘人数：</strong> {$zprs}</li>
+                                                    <li><strong> 	学历要求：</strong> {$xueliyaoqiu}</li>
+                                                    <li><strong> 	工作年限：</strong> {$gznx}</li>
+                                                    <li><strong> 	每月薪资：</strong> {$meiyuexinzi}</li>
+                                                </ul>
+                                                <p style="margin-top: 20px;padding-left:5px;">
+                                                    <a class="btn green" href="javascript:dr_favorite()"><i class="fa fa-plus"></i> 收藏职位</a>
+
+                                                    <a class="btn red" href="javascript:dr_toudi()"><i class="fa fa-rmb"></i> 投递简历</a>
+                                                </p>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="portlet light">
+                                    <div class="portlet-title">
+                                        <div class="caption">
+                                            <span class="caption-subject font-dark bold uppercase">任职要求</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="portlet-body" style="height: auto;">
+                                        {$content}
+                                    </div>
+
+
+                                </div>
+                                <div class="portlet light">
+                                    <div class="portlet-title">
+                                        <div class="caption">
+                                            <span class="caption-subject font-dark bold uppercase">联系方式</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="portlet-body" style="height: auto;">
+                                        <p>联系人: {$lianxiren}</p>
+                                        <p>联系电话: {$lxdh}</p>
+                                        <p>工作地区: {dr_linkagepos('address', $gongzuodiqu, ' - ')}</p>
+                                        <p>详细街道: {$xxjd}</p>
+                                    </div>
+
+
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{template "footer.html", "/"}
