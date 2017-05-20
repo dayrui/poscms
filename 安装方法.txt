@@ -1,12 +1,13 @@
-ʹ���ֲ᣺http://www.poscms.net/help-doc/
-�����ֲ᣺http://www.poscms.net/dev-doc/
+使用手册：http://www.poscms.net/help-doc/
+开发手册：http://www.poscms.net/dev-doc/
 
-���л�����
+运行环境：
 php5.3 - php7
-mysql5����
+mysql5以上
 
-��װ������
-����http://��վ/install.php
+安装方法：
+访问http://网站/install.php
+账号密码都是admin
 
 
-�˰汾���ڴ��ڿ����׶Σ�����ѧϰʹ��
+此版本正在处于开发阶段，仅供学习使用
