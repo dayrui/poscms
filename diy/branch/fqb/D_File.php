@@ -192,7 +192,7 @@ class D_File extends M_Controller {
 
         $this->_init();
 
-        $file = trim(str_replace(array('../', '\\'), array('', '/'), $this->input->get('file')), '/');
+        $file = trim(str_replace(array('../', '\\', '..'), array('', '/'), $this->input->get('file')), '/');
 		!is_file($this->path.$file) &&  $this->admin_msg(fc_lang('文件不存在'));
 		
 		if (IS_POST) {
