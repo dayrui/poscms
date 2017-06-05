@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @since	    version 3.2.0
+ * @author	    Lirui <lirui@dayrui.com>
+ * @license     http://www.dayrui.com/license
+ * @copyright   Copyright (c) 2011 - 9999, Dayrui.Com, Inc. QQ群618659751
+ */
 
 
 define('IS_ADMIN', TRUE); // 项目标识
