@@ -1,7 +1,5 @@
 <?php
 
-
-
 class D_File extends M_Controller {
 	
 	public $_dir;
@@ -45,7 +43,7 @@ class D_File extends M_Controller {
         $this->_init();
 
 		$this->load->helper('directory');
-		$dir = trim(str_replace('.', '', $this->input->get('dir')), '/');
+		$dir = trim(str_replace('.', '', $this->input->get('dir', true)), '/');
 		$path = $dir ? $this->path.$dir.'/' : $this->path;
 		$data = directory_map($path, 1);
 		$list = array();
@@ -85,7 +83,7 @@ class D_File extends M_Controller {
 			'path' => $path,
 			'list' => $list,
 			'parent' => dirname($dir),
-            'upload' => 'dr_upload_files2(\''.dr_url('api/upload', array('path' => $path)).'\')',
+            'upload' => 'dr_upload_files2(\''.dr_url('api/upload', array('path' => urlencode($path))).'\')',
 		));
 		$this->template->display('file_index.html');
 	}
@@ -98,7 +96,7 @@ class D_File extends M_Controller {
         $this->_init();
 
         $this->load->helper('directory');
-		$dir = trim(str_replace('.', '', $this->input->get('dir')), '/');
+		$dir = trim(str_replace('.', '', $this->input->get('dir', true)), '/');
 		$path = $dir ? $this->path.$dir.'/' : $this->path;
 		$data = directory_map($path, 1);
 		$list = array();
@@ -137,7 +135,7 @@ class D_File extends M_Controller {
 			'path' => $path,
 			'list' => $list,
 			'parent' => dirname($dir),
-            'upload' => 'dr_upload_files2(\''.dr_url('api/upload', array('path' => $path)).'\')',
+            'upload' => 'dr_upload_files2(\''.dr_url('api/upload', array('path' => urlencode($path))).'\')',
 		));
 		$this->template->display('file_index.html');
 	}
@@ -149,13 +147,14 @@ class D_File extends M_Controller {
 
         $this->_init();
 
-        $dir = trim(str_replace('.', '', $this->input->get('dir')), '/');
+        $dir = trim(str_replace('.', '', $this->input->get('dir', true)), '/');
 		$path = $dir ? $this->path.$dir.'/' : $this->path;
 		$error = $file = '';
 		!is_dir($path) && exit('<p style="padding:10px 20px 20px 20px">'.fc_lang('文件目录不存在').'</p>');
 		
 		if (IS_POST) {
 			$file = trim(str_replace(array('/', '\\'), '', $this->input->post('file')), '/');
+			!$file && exit(dr_json(0, fc_lang('文件或者目录不能为空'), 'file'));
 			is_file($path.$file) && exit(dr_json(0, fc_lang('文件或者目录已经存在了'), 'file'));
 			$ext = strrchr($file, '.');
 			if ($ext) {
@@ -192,9 +191,12 @@ class D_File extends M_Controller {
 
         $this->_init();
 
-        $file = trim(str_replace(array('../', '\\', '..'), array('', '/'), $this->input->get('file')), '/');
+        $file = trim(str_replace(array('../', '\\', '..'), array('', '/', ''), $this->input->get('file', true)), '/');
 		!is_file($this->path.$file) &&  $this->admin_msg(fc_lang('文件不存在'));
-		
+        if (!in_array(strtolower(strrchr($file, '.')), array('.html', '.js', '.css'))) {
+            $this->admin_msg(fc_lang('文件扩展名不规范'));
+        }
+
 		if (IS_POST) {
 			$code = $this->input->post('code');
 			file_put_contents($this->path.$file, $code);
@@ -205,7 +207,7 @@ class D_File extends M_Controller {
 		$this->template->assign(array(
 			'path' => $this->path.$file,
 			'back' => dr_url($furi.($this->input->get('ismb') ? 'mobile' : 'index'), array('dir'=> dirname($file), 'ismb' => $this->input->get('ismb'))),
-			'body' => htmlentities(file_get_contents($this->path.$file)),
+			'body' => htmlentities(file_get_contents($this->path.$file),ENT_COMPAT,'UTF-8'),
 
 		));
 		$this->template->display('file_edit.html');
@@ -219,7 +221,7 @@ class D_File extends M_Controller {
 
         $this->_init();
 
-        $file = trim(str_replace(array('../', '\\'), array('', '/'), $this->input->get('file')), '/');
+        $file = trim(str_replace(array('../', '\\', '..'), array('', '/'), $this->input->get('file', true)), '/');
 		!is_file($this->path.$file) && $this->admin_msg(fc_lang('文件不存在'));
 
         $path = dirname($this->path.$file);
@@ -243,7 +245,7 @@ class D_File extends M_Controller {
 
         $this->_init();
 
-        $file = trim(str_replace(array('../', '\\'), array('', '/'), $this->input->get('file')), '/');
+        $file = trim(str_replace(array('../', '\\', '..'), array('', '/'), $this->input->get('file', true)), '/');
 		!$file && exit(dr_json(0, fc_lang('文件或者目录格式不正确')));
 		
 		if (is_dir($this->path.$file)) {
@@ -270,7 +272,7 @@ class D_File extends M_Controller {
 		
 		if (IS_AJAX) {
             $this->load->model('system_model');
-            $data = $this->input->post('data');
+            $data = $this->input->post('data', true);
             $cache = $this->system_model->cache(); // 表结构缓存
 			echo '<div style="border: 1px solid #DCE3ED;padding:10px;width:650px;">';
 			switch ($this->input->post('action')) {
