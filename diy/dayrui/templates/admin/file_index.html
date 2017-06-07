@@ -50,8 +50,7 @@ function dr_space_dialog(url) {
 			<td align="left">
 			{if $this->ci->is_auth($auth.'add')}
 				<a class="add" title="{fc_lang('添加')}" href="javascript:dr_dialog('{dr_url($furi.'add', array('dir'=> $dir, 'ismb'=>$ismb))}', 'add');"></a>
-                <a style="margin-left:10px" class="upload" title="{fc_lang('上传')}" href="javascript:{$upload};"></a>
-			{/if}
+            {/if}
 			</td>
 		</tr>
 		{if $parent}
