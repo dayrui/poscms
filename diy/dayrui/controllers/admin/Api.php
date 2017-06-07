@@ -130,7 +130,8 @@ class Api extends M_Controller {
      * @return void
      */
     public function swfupload() {
-
+exit('0,暂时不可用');
+		return;
         if (IS_POST) {
             $ext = 'jpg,gif,png,js,css,html,swf,zip';
             $path = $this->input->post('path');
