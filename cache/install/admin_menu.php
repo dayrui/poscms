@@ -289,58 +289,6 @@ return array(
     ),
 
 
-    array(
-        'name' => '空间',
-        'mark' => 'myspace',
-        'icon' => 'fa fa-trello',
-        'menu' => array(
-            array(
-                'name' => '空间黄页',
-                'icon' => 'fa fa-trello',
-                'menu' => array(
-                    array(
-                        'name' => '空间管理',
-                        'uri' => 'space/admin/space/index',
-                        'icon' => 'fa fa-trello',
-                    ),
-                    array(
-                        'name' => '空间模型',
-                        'uri' => 'space/admin/model/index',
-                        'icon' => 'fa fa-cogs',
-                    ),
-                    array(
-                        'name' => '动态管理',
-                        'uri' => 'space/admin/sns/index',
-                        'icon' => 'fa fa-weibo',
-                    ),
-                    array(
-                        'name' => '默认栏目',
-                        'uri' => 'space/admin/space/init',
-                        'icon' => 'fa fa-th',
-                    ),
-                    array(
-                        'name' => '空间设置',
-                        'uri' => 'space/admin/setting/space',
-                        'icon' => 'fa fa-cog',
-                    ),
-                    array(
-                        'name' => '自定义字段',
-                        'uri' => 'admin/field/index/rname/spacetable/rid/0',
-                        'icon' => 'fa fa-code',
-                    ),
-                )
-            ),
-            array(
-                'name' => '空间内容',
-                'mark' => 'space-content',
-                'icon' => 'fa fa-th-large',
-                'menu' => array(
-
-                )
-            ),
-
-        )
-    ),
 
     array(
         'name' => '界面',
@@ -391,121 +339,6 @@ return array(
                         'name' => '标签向导',
                         'uri' => 'member/admin/tpl/tag',
                         'icon' => 'fa fa-tag',
-                    ),
-                )
-            ),
-            array(
-                'name' => '空间模板',
-                'icon' => 'fa fa-trello',
-                'mark' => 'template-space',
-                'menu' => array(
-                    array(
-                        'name' => '个人空间模板',
-                        'uri' => 'space/admin/spacetpl/index',
-                        'icon' => 'fa fa-desktop',
-                    ),
-                )
-            ),
-
-        )
-    ),
-
-    array(
-        'name' => '微信Beta',
-        'icon' => 'fa fa-weixin',
-        'menu' => array(
-            array(
-                'name' => '公众号',
-                'icon' => 'fa fa-wechat',
-                'menu' => array(
-                    array(
-                        'name' => '参数设置',
-                        'uri' => 'weixin/index',
-                        'icon' => 'fa fa-cog',
-                    ),
-                    array(
-                        'name' => '自定义菜单',
-                        'uri' => 'wmenu/index',
-                        'icon' => 'fa fa-table',
-                    ),
-                )
-            ),
-            array(
-                'name' => '素材管理',
-                'icon' => 'fa fa-navicon',
-                'menu' => array(
-                    array(
-                        'name' => '文字素材',
-                        'uri' => 'wmaterial/index',
-                        'icon' => 'fa fa-file-text',
-                    ),
-                    array(
-                        'name' => '图文素材',
-                        'uri' => 'wmaterial/tw',
-                        'icon' => 'fa fa-file-image-o',
-                    ),
-                    array(
-                        'name' => '图片素材',
-                        'uri' => 'wmaterial/tp',
-                        'icon' => 'fa fa-file-picture-o',
-                    ),
-                    array(
-                        'name' => '语音素材',
-                        'uri' => 'wmaterial/yy',
-                        'icon' => 'fa fa-file-sound-o',
-                    ),
-                    array(
-                        'name' => '视频素材',
-                        'uri' => 'wmaterial/sp',
-                        'icon' => 'fa fa-file-video-o',
-                    ),
-                )
-            ),
-            array(
-                'name' => '粉丝管理',
-                'icon' => 'fa fa-user',
-                'menu' => array(
-                    array(
-                        'name' => '微信分组',
-                        'uri' => 'wgroup/index',
-                        'icon' => 'fa fa-users',
-                    ),
-                    array(
-                        'name' => '微信粉丝',
-                        'uri' => 'wuser/index',
-                        'icon' => 'fa fa-user',
-                    ),
-                )
-            ),
-            array(
-                'name' => '回复设置',
-                'icon' => 'fa fa-commenting',
-                'menu' => array(
-                    array(
-                        'name' => '关键字管理',
-                        'uri' => 'wkeyword/index',
-                        'icon' => 'fa fa-tag',
-                    ),
-                    array(
-                        'name' => '系统回复设置',
-                        'uri' => 'weixin/reply',
-                        'icon' => 'fa fa-cog',
-                    ),
-                )
-            ),
-            array(
-                'name' => '消息管理',
-                'icon' => 'fa fa-envelope',
-                'menu' => array(
-                    array(
-                        'name' => '群发消息',
-                        'uri' => 'wsms/index',
-                        'icon' => 'fa fa-send',
-                    ),
-                    array(
-                        'name' => '消息记录',
-                        'uri' => 'wmessage/index',
-                        'icon' => 'fa fa-envelope',
                     ),
                 )
             ),
@@ -599,9 +432,9 @@ return array(
                 'icon' => 'fa fa-cloud',
                 'menu' => array(
                     array(
-                        'name' => '程序升级',
-                        'uri' => 'upgrade/index',
-                        'icon' => 'fa fa-refresh',
+                        'name' => '使用文档',
+                        'uri' => 'api/helponline',
+                        'icon' => 'fa fa-book',
                     ),
                     array(
                         'name' => '在线插件',
@@ -617,11 +450,6 @@ return array(
                         'name' => '功能模块',
                         'uri' => 'api/mkonline',
                         'icon' => 'fa fa-cogs',
-                    ),
-                    array(
-                        'name' => '使用文档',
-                        'uri' => 'api/helponline',
-                        'icon' => 'fa fa-book',
                     ),
                 )
             ),
