@@ -1,0 +1,140 @@
+{template nheader.html}
+<script type="text/javascript">
+$(function() {
+	{if $error}dr_tips('<font color=red>{$error}</font>', 3, 0);{/if}
+
+});
+function dr_nav(id) {
+
+}
+function dr_load_category(dir, catid) {
+
+}
+function dr_selected2() {
+    if ($("#dr_select2").prop('checked')) {
+        $("#dr_category").show();
+    } else {
+        $("#dr_category").hide();
+
+    }
+}
+function dr_select_category(id) {
+    if (id == 0) {
+        $(".nav_c").show();
+    } else {
+        $(".nav_c").hide();
+    }
+}
+</script>
+<div class="page-bar">
+    <ul class="page-breadcrumb mylink">
+        {$menu.link}
+
+    </ul>
+    <ul class="page-breadcrumb myname">
+        {$menu.name}
+    </ul>
+    <div class="page-toolbar">
+        <div class="btn-group pull-right">
+            <button type="button" class="btn green btn-sm btn-outline dropdown-toggle" data-toggle="dropdown" aria-expanded="false" data-hover="dropdown"> {fc_lang('操作菜单')}
+                <i class="fa fa-angle-down"></i>
+            </button>
+            <ul class="dropdown-menu pull-right" role="menu">
+                {loop $menu.quick $t}
+                <li>
+                    <a href="{$t.url}">{$t.icon} {$t.name}</a>
+                </li>
+                {/loop}
+                <li class="divider"> </li>
+                <li>
+                    <a href="javascript:window.location.reload();">
+                        <i class="icon-refresh"></i> {fc_lang('刷新页面')}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<h3 class="page-title">
+    <small>{fc_lang('导航是给用户提供浏览方向及分类指引的重要功能，例如首页头部导航、底部链接信息、侧边链接、顶端链接、友情链接等，根据实际情况来调用')}</small>
+</h3>
+<form class="form-horizontal" action="" method="post" id="myform" name="myform" style="margin-top:30px;margin-bottom: 70px;">
+    <div class="portlet light bordered">
+
+        <div class="portlet-title">
+            <div class="caption">
+                <span class="caption-subject font-green bold uppercase">{$name}</span>
+            </div>
+        </div>
+        <div class="portlet-body">
+            <div class="portlet-body form">
+                <div class="form-body">
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">{fc_lang('分类')}：</label>
+                        <div class="col-md-9">
+                            <label>{$select}</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group ">
+                        <label class="col-md-2 control-label">{fc_lang('名称')}：</label>
+                        <div class="col-md-9">
+                            <div class="radio-list">
+
+                                <label>{dr_field_input('name', 'Text', $field['name']['setting'], $data['name'])}</label>
+                                <span class="help-block">{fc_lang('给它一个描述名称')}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group nav_0 nav_c">
+                        <label class="col-md-2 control-label">{fc_lang('图片')}：</label>
+                        <div class="col-md-9">
+                            <div class="radio-list">
+                                {dr_field_input('thumb', 'File', $field['thumb']['setting'], $data['thumb'])}
+                                <span class="help-block">{fc_lang('图片标识，例如一个图标等等')}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <label class="col-md-2 control-label">{fc_lang('标题')}：</label>
+                        <div class="col-md-9">
+                            <div class="radio-list">
+
+                                <label>{dr_field_input('title', 'Text', $field['title']['setting'], $data['title'])}</label>
+                                <span class="help-block">{fc_lang('对该导航的一个描述，鼠标移上去显示的标题')}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group nav_0">
+                        <label class="col-md-2 control-label">{fc_lang('链接地址')}：</label>
+                        <div class="col-md-9">
+                            <div class="radio-list">
+
+                                {dr_field_input('url', 'Text', $field['url']['setting'], $data['url'])}
+                                <span class="help-block">{fc_lang('填写完整的URL地址')}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="myfooter">
+        <div class="row">
+            <div class="portlet-body form">
+                <div class="form-body">
+                    <div class="form-actions">
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <button type="submit" class="btn green"> <i class="fa fa-save"></i> {fc_lang('保存')}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{template nfooter.html}
