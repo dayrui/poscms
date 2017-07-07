@@ -1,6 +1,5 @@
 REPLACE INTO `{dbprefix}member_menu` VALUES(1, 0, '账号', '', '', '', 0, 0, 0, 'icon-user');
 REPLACE INTO `{dbprefix}member_menu` VALUES(2, 0, '财务', '', '', '', 0,0, 0, 'fa fa-rmb');
-REPLACE INTO `{dbprefix}member_menu` VALUES(3, 0, '空间', '', '', 'm_space', 0,0, 0, '');
 REPLACE INTO `{dbprefix}member_menu` VALUES(4, 0, '应用', '', '', 'm_app',0, 0, 0, 'fa fa-cloud');
 REPLACE INTO `{dbprefix}member_menu` VALUES(43, 0, '内容', '', '', 'm_mod',0, 0, 0, 'fa fa-certificate');
 REPLACE INTO `{dbprefix}member_menu` VALUES(5, 1, '基本管理', '', '', '',0, 0, 0, 'fa fa-cogs');
@@ -19,8 +18,7 @@ REPLACE INTO `{dbprefix}member_menu` VALUES(21, 17, '收入记录', 'pay/index',
 REPLACE INTO `{dbprefix}member_menu` VALUES(22, 17, '消费记录', 'pay/spend', '', '',0, 0, 0, 'fa fa-calendar-minus-o');
 REPLACE INTO `{dbprefix}member_menu` VALUES(23, 17, '经验值记录', 'pay/experience', '', '',0, 0, 0, 'fa fa-compass');
 REPLACE INTO `{dbprefix}member_menu` VALUES(24, 17, '虚拟币记录', 'pay/score', '', '',0, 0, 0, 'fa fa-diamond');
-REPLACE INTO `{dbprefix}member_menu` VALUES(25, 3, '基本设置', '', '', '',0, 0, 0, 'fa fa-cog');
-REPLACE INTO `{dbprefix}member_menu` VALUES(26, 3, '内容管理', '', '', 'm_space_content',0, 0, 99, 'fa fa-database');
+
 REPLACE INTO `{dbprefix}member_menu` VALUES(27, 25, '空间设置', 'space/space/index', '', '',0, 0, 0, 'fa fa-cog');
 REPLACE INTO `{dbprefix}member_menu` VALUES(28, 25, '模板设置', 'space/space/template', '', '',0, 0, 0, 'fa fa-html5');
 REPLACE INTO `{dbprefix}member_menu` VALUES(29, 26, '栏目分类', 'space/category/index', '', '',0, 0, 0, 'fa fa-database');
@@ -30,7 +28,7 @@ REPLACE INTO `{dbprefix}member_menu` VALUES(32, 26, '外链管理', 'space/space
 REPLACE INTO `{dbprefix}member_menu` VALUES(33, 26, '日志管理', 'space/space3/index', '', 'space-3',0, 0, 0, 'fa fa-navicon');
 REPLACE INTO `{dbprefix}member_menu` VALUES(34, 26, '相册管理', 'space/space4/index', '', 'space-4',0, 0, 0, 'fa fa-navicon');
 REPLACE INTO `{dbprefix}member_menu` VALUES(35, 26, '幻灯管理', 'space/space5/index', '', 'space-5',0, 0, 0, 'fa fa-navicon');
-REPLACE INTO `{dbprefix}member_menu` VALUES(37, 3, '空间互动', '', '', '',0, 0, 0, 'fa fa-weibo');
+
 REPLACE INTO `{dbprefix}member_menu` VALUES(38, 37, '我的动态', 'space/sns/index', '', '',0, 0, 0, 'fa fa-weibo');
 REPLACE INTO `{dbprefix}member_menu` VALUES(39, 37, '我关注的', 'space/sns/follow', '', '',0, 0, 0, 'fa fa-share-alt-square');
 REPLACE INTO `{dbprefix}member_menu` VALUES(40, 37, '我的粉丝', 'space/sns/fans', '', '',0, 0, 0, 'fa fa-user');
