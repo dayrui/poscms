@@ -492,7 +492,8 @@ class Account extends M_Controller {
 // 上传图片到服务器
         if (defined('UCSSO_API')) {
             $rt = ucsso_avatar($this->uid, file_get_contents($dir.'90x90.jpg'));
-            !$rt['code'] && $this->_json(0, fc_lang('通信失败：%s', $rt['msg']));
+
+            !$rt['code'] && exit(iconv('UTF-8', 'GBK', fc_lang('通信失败：%s', $rt['msg'])));
         }
 
         // 上传头像积分处理
