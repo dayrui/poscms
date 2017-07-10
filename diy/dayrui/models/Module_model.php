@@ -3,18 +3,18 @@
 if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 class Module_model extends CI_Model {
-	
-	public $system_table; // 系统默认表
-	public $mform_cache; // 模块表单缓存
+
+    public $system_table; // 系统默认表
+    public $mform_cache; // 模块表单缓存
     private $share_category;
 
-	/*
-	 * 模块模型类
-	 */
+    /*
+     * 模块模型类
+     */
     public function __construct() {
         parent::__construct();
-		$this->system_table = array(
-			'draft' => "
+        $this->system_table = array(
+            'draft' => "
 			CREATE TABLE IF NOT EXISTS `{tablename}` (
 			  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 			  `cid` int(10) unsigned NOT NULL COMMENT '内容id',
@@ -31,7 +31,7 @@ class Module_model extends CI_Model {
 			  KEY `inputtime` (`inputtime`)
 			) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='内容草稿表';",
 
-			'verify' => "
+            'verify' => "
 			CREATE TABLE IF NOT EXISTS `{tablename}` (
 			  `id` int(10) unsigned NOT NULL,
 			  `catid` smallint(5) unsigned NOT NULL COMMENT '栏目id',
@@ -50,7 +50,7 @@ class Module_model extends CI_Model {
 			  KEY `backuid` (`backuid`)
 			) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='内容审核表';",
 
-			'hits' => "
+            'hits' => "
 			CREATE TABLE IF NOT EXISTS `{tablename}` (
 			  `id` int(10) unsigned NOT NULL COMMENT '文章id',
 			  `hits` int(10) unsigned NOT NULL COMMENT '总点击数',
@@ -64,8 +64,8 @@ class Module_model extends CI_Model {
 			  KEY `month_hits` (`month_hits`),
 			  KEY `year_hits` (`year_hits`)
 			) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='时段点击量统计';",
-			
-			'index' => "
+
+            'index' => "
 			CREATE TABLE IF NOT EXISTS `{tablename}` (
 			  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 			  `uid` mediumint(8) unsigned NOT NULL COMMENT '作者uid',
@@ -78,8 +78,8 @@ class Module_model extends CI_Model {
 			  KEY `status` (`status`),
 			  KEY `inputtime` (`inputtime`)
 			) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='内容索引表';",
-			
-			'extend_index' => "
+
+            'extend_index' => "
 			CREATE TABLE IF NOT EXISTS `{tablename}` (
 			  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 			  `cid` int(10) unsigned NOT NULL COMMENT '内容id',
@@ -113,8 +113,8 @@ class Module_model extends CI_Model {
 			  KEY `inputtime` (`inputtime`),
 			  KEY `backuid` (`backuid`)
 			) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='扩展内容审核表';",
-			
-			'category' => "
+
+            'category' => "
 			CREATE TABLE IF NOT EXISTS `{tablename}` (
 				`id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
 				`pid` smallint(5) unsigned NOT NULL DEFAULT '0' COMMENT '上级id',
@@ -134,8 +134,8 @@ class Module_model extends CI_Model {
 				KEY `show` (`show`),
 				KEY `module` (`pid`,`displayorder`,`id`)
 			) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='栏目表';",
-			
-			'category_data' => "
+
+            'category_data' => "
 			CREATE TABLE IF NOT EXISTS `{tablename}` (
 			  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 			  `uid` mediumint(8) unsigned NOT NULL COMMENT '作者uid',
@@ -144,8 +144,8 @@ class Module_model extends CI_Model {
 			  KEY `uid` (`uid`),
 			  KEY `catid` (`catid`)
 			) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='栏目附加表';",
-			
-			'category_data_0' => "
+
+            'category_data_0' => "
 			CREATE TABLE IF NOT EXISTS `{tablename}` (
 			  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 			  `uid` mediumint(8) unsigned NOT NULL COMMENT '作者uid',
@@ -154,8 +154,8 @@ class Module_model extends CI_Model {
 			  KEY `uid` (`uid`),
 			  KEY `catid` (`catid`)
 			) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='栏目附加表';",
-			
-			'tag' => "
+
+            'tag' => "
 			CREATE TABLE IF NOT EXISTS `{tablename}` (
 			  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
 			  `name` varchar(200) NOT NULL COMMENT 'tag名称',
@@ -166,8 +166,8 @@ class Module_model extends CI_Model {
 			  KEY `letter` (`code`,`hits`)
 			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='Tag标签表';
 			",
-			
-			'flag' => "
+
+            'flag' => "
 			CREATE TABLE IF NOT EXISTS `{tablename}` (
 			  `flag` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '文档标记id',
 			  `id` int(10) unsigned NOT NULL COMMENT '文档内容id',
@@ -177,8 +177,8 @@ class Module_model extends CI_Model {
 			  KEY `catid` (`catid`)
 			) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='标记表';
 			",
-			
-			'search' => "
+
+            'search' => "
 			CREATE TABLE IF NOT EXISTS `{tablename}` (
 			  `id` varchar(32) NOT NULL,
 			  `catid` smallint(5) unsigned NOT NULL COMMENT '栏目id',
@@ -194,7 +194,7 @@ class Module_model extends CI_Model {
 			) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='搜索表';
 			",
 
-			'search_index' => "
+            'search_index' => "
 			CREATE TABLE IF NOT EXISTS `{tablename}` (
 			  `id` varchar(32) NOT NULL,
 			  `cid` int(10) unsigned NOT NULL COMMENT '文档Id',
@@ -204,8 +204,8 @@ class Module_model extends CI_Model {
 			  KEY `inputtime` (`inputtime`)
 			) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='搜索索引表';
 			",
-			
-			'html' => "
+
+            'html' => "
 			CREATE TABLE IF NOT EXISTS `{tablename}` (
 			  `id` bigint(18) unsigned NOT NULL AUTO_INCREMENT,
 			  `rid` int(10) unsigned NOT NULL COMMENT '相关id',
@@ -221,8 +221,8 @@ class Module_model extends CI_Model {
 			  KEY `type` (`type`),
 			  KEY `catid` (`catid`)
 			) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='html文件存储表';",
-			
-			'favorite' => "
+
+            'favorite' => "
 			CREATE TABLE IF NOT EXISTS `{tablename}` (
               `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
               `cid` int(10) unsigned NOT NULL COMMENT '文档id',
@@ -238,7 +238,7 @@ class Module_model extends CI_Model {
               KEY `inputtime` (`inputtime`)
             ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='收藏夹表';",
 
-			'buy' => "
+            'buy' => "
             CREATE TABLE IF NOT EXISTS `{tablename}` (
               `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
               `cid` int(10) unsigned NOT NULL COMMENT '文档id',
@@ -252,7 +252,7 @@ class Module_model extends CI_Model {
               KEY `cid` (`cid`,`uid`,`inputtime`)
             ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='主题购买记录表';",
 
-			'extend_buy' => "
+            'extend_buy' => "
             CREATE TABLE IF NOT EXISTS `{tablename}` (
               `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
               `cid` int(10) unsigned NOT NULL COMMENT '文档id',
@@ -267,120 +267,120 @@ class Module_model extends CI_Model {
               KEY `cid` (`cid`,`eid`,`uid`,`inputtime`)
             ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='扩展购买记录表';",
 
-		);	
-	}
-	
-	/**
-	 * 所有模块
-	 *
-	 * @return	array
-	 */
-	public function get_data() {
+        );
+    }
 
-		$_data = $this->db->order_by('displayorder ASC,id ASC')->get('module')->result_array();
-		if (!$_data) {
+    /**
+     * 所有模块
+     *
+     * @return	array
+     */
+    public function get_data() {
+
+        $_data = $this->db->order_by('displayorder ASC,id ASC')->get('module')->result_array();
+        if (!$_data) {
             return NULL;
         }
 
-		$data = array();
-		foreach ($_data as $t) {
-			$t['site'] = dr_string2array($t['site']);
-			$t['setting'] = dr_string2array($t['setting']);
-			$data[$t['dirname']] = $t;
-		}
+        $data = array();
+        foreach ($_data as $t) {
+            $t['site'] = dr_string2array($t['site']);
+            $t['setting'] = dr_string2array($t['setting']);
+            $data[$t['dirname']] = $t;
+        }
 
-		return $data;
-	}
-	
-	/**
-	 * 模块数据
-	 *
-	 * @param	int		$id
-	 * @return	array
-	 */
-	public function get($id) {
+        return $data;
+    }
 
-		if (is_numeric($id)) {
-			$this->db->where('id', (int)$id);
-		} else {
-			$this->db->where('dirname', (string)$id);
-		}
-		$data = $this->db->limit(1)->get('module')->row_array();
-		if (!$data) {
+    /**
+     * 模块数据
+     *
+     * @param	int		$id
+     * @return	array
+     */
+    public function get($id) {
+
+        if (is_numeric($id)) {
+            $this->db->where('id', (int)$id);
+        } else {
+            $this->db->where('dirname', (string)$id);
+        }
+        $data = $this->db->limit(1)->get('module')->row_array();
+        if (!$data) {
             return NULL;
         }
 
-		$data['site'] = dr_string2array($data['site']);
-		$data['setting'] = dr_string2array($data['setting']);
+        $data['site'] = dr_string2array($data['site']);
+        $data['setting'] = dr_string2array($data['setting']);
 
         // 模块名称
         $name = $this->db->select('name')->where('pid', 0)->where('mark', 'module-'.$data['dirname'])->get('admin_menu')->row_array();
         $data['name'] = $name['name'] ? $name['name'] : $data['dirname'];
 
-		return $data;
-	}
-	
-	/**
-	 * 模块入库
-	 *
-	 * @param	string	$dir
-	 * @return	intval
-	 */
-	public function add($dir, $config, $nodb = '') {
+        return $data;
+    }
 
-		if (!$dir) {
+    /**
+     * 模块入库
+     *
+     * @param	string	$dir
+     * @return	intval
+     */
+    public function add($dir, $config, $nodb = '') {
+
+        if (!$dir) {
             return NULL;
         } elseif ($this->db->where('dirname', $dir)->count_all_results('module')) {
-			// 判断重复安装
+            // 判断重复安装
             return NULL;
         }
 
-		$share = (int)$config['share'];
-		$extend = (int)$config['extend'];
-		$m = array(
-			'site' => '',
-			'share' => $share,
-			'extend' => $extend,
-			'dirname' => $dir,
-			'setting' => '',
-			'sitemap' => 1,
-			'disabled' => 0,
-			'displayorder' => 0,
-		);
-		$this->db->replace('module', $m);
-		$m['id'] = $id = $this->db->insert_id();
+        $share = (int)$config['share'];
+        $extend = (int)$config['extend'];
+        $m = array(
+            'site' => '',
+            'share' => $share,
+            'extend' => $extend,
+            'dirname' => $dir,
+            'setting' => '',
+            'sitemap' => 1,
+            'disabled' => 0,
+            'displayorder' => 0,
+        );
+        $this->db->replace('module', $m);
+        $m['id'] = $id = $this->db->insert_id();
 
-		if (!$id) {
+        if (!$id) {
             return NULL;
         }
 
         // 非自定义表时
         if (!$nodb) {
-			// 字段入库
-			$main = require FCPATH.'module/'.$dir.'/config/main.table.php'; // 主表信息
-			foreach ($main['field'] as $field) {
-				$this->add_field($id, $field, 1);
-			}
-			$data = require FCPATH.'module/'.$dir.'/config/data.table.php'; // 附表信息
-			if ($data['field']) {
-				foreach ($data['field'] as $field) {
-					$this->add_field($id, $field, 0);
-				}
-			}
-			//扩展内容表
-			if ($extend) {
-				// 字段入库
-				$main = require FCPATH.'module/'.$dir.'/config/extend.main.table.php'; // 主表信息
-				foreach ($main['field'] as $field) {
-					$this->add_field($id, $field, 1, 1);
-				}
-				$data = require FCPATH.'module/'.$dir.'/config/extend.data.table.php'; // 附表信息
-				if ($data['field']) {
-					foreach ($data['field'] as $field) {
-						$this->add_field($id, $field, 0, 1);
-					}
-				}
-			}
+            // 字段入库
+            $main = require FCPATH.'module/'.$dir.'/config/main.table.php'; // 主表信息
+            foreach ($main['field'] as $field) {
+                $this->add_field($id, $field, 1);
+            }
+            $data = require FCPATH.'module/'.$dir.'/config/data.table.php'; // 附表信息
+            if ($data['field']) {
+                foreach ($data['field'] as $field) {
+                    $this->add_field($id, $field, 0);
+                }
+            }
+            //扩展内容表
+            if ($extend) {
+                // 字段入库
+                $main = require FCPATH.'module/'.$dir.'/config/extend.main.table.php'; // 主表信息
+                foreach ($main['field'] as $field) {
+                    $this->add_field($id, $field, 1, 1);
+                }
+                $data = require FCPATH.'module/'.$dir.'/config/extend.data.table.php'; // 附表信息
+                if ($data['field']) {
+                    foreach ($data['field'] as $field) {
+                        $this->add_field($id, $field, 0, 1);
+                    }
+                }
+            }
         } else {
             $install_file = FCPATH.'module/'.$dir.'/config/install.php'; // 自定义安装文件
             if (is_file($install_file)) {
@@ -397,29 +397,29 @@ class Module_model extends CI_Model {
         $this->db->where('mark', 'module-'.$dir)->delete('member_menu');
         $this->db->like('mark', 'module-'.$dir.'-%')->delete('member_menu');
 
-		// 重新安装菜单
-		if (is_file(FCPATH.'module/'.$dir.'/config/menu.php')) {
-			// 后台菜单
-			$this->load->model('menu_model');
-			$this->menu_model->init_module($m);
+        // 重新安装菜单
+        if (is_file(FCPATH.'module/'.$dir.'/config/menu.php')) {
+            // 后台菜单
+            $this->load->model('menu_model');
+            $this->menu_model->init_module($m);
             // 会员菜单
-			$this->load->model('member_menu_model');
-			$this->member_menu_model->init_module($m);
-		}
+            $this->load->model('member_menu_model');
+            $this->member_menu_model->init_module($m);
+        }
 
-		return $id;
-	}
-	
-	// 模块的导出
-	public function export($dir, $name) {
-	
-		if (!is_dir(FCPATH.'module/'.$dir)) {
+        return $id;
+    }
+
+    // 模块的导出
+    public function export($dir, $name) {
+
+        if (!is_dir(FCPATH.'module/'.$dir)) {
             return '模块目录不存在';
         }
-		
-		// 模块信息
-		$module = $this->db->limit(1)->where('dirname', $dir)->get('module')->row_array();
-		if (!$module) {
+
+        // 模块信息
+        $module = $this->db->limit(1)->where('dirname', $dir)->get('module')->row_array();
+        if (!$module) {
             return '模块不存在或者尚未安装';
         }
         $site = dr_string2array($module['site']);
@@ -427,87 +427,87 @@ class Module_model extends CI_Model {
             return '当前站点尚未安装此模块，无法生成';
         }
 
-		// 模块配置文件
-		$config = require FCPATH.'module/'.$dir.'/config/module.php';
+        // 模块配置文件
+        $config = require FCPATH.'module/'.$dir.'/config/module.php';
         if (isset($config['nodb']) && $config['nodb']) {
             return '自定义数据表模块不允许生成';
         }
 
-		$config['key'] = 0;
-		$config['name'] = $name ? $name : $config['name'];
-		$config['author'] = SITE_NAME;
-		$config['version'] = '';
-		$this->load->library('dconfig');
-		$size = $this->dconfig->file(FCPATH.'module/'.$dir.'/config/module.php')->note('模块配置文件')->space(24)->to_require_one($config);
-		if (!$size) {
+        $config['key'] = 0;
+        $config['name'] = $name ? $name : $config['name'];
+        $config['author'] = SITE_NAME;
+        $config['version'] = '';
+        $this->load->library('dconfig');
+        $size = $this->dconfig->file(FCPATH.'module/'.$dir.'/config/module.php')->note('模块配置文件')->space(24)->to_require_one($config);
+        if (!$size) {
             return '目录'.$dir.'不可写！';
         }
 
         // 主表字段
-		$file = FCPATH.'module/'.$dir.'/config/main.table.php';
-		$table = array();
-		$header = $this->dconfig->file($file)->note('主表结构（由开发者定义）')->to_header();
-		$sql = $this->db->query("SHOW CREATE TABLE `".$this->db->dbprefix(SITE_ID.'_'.$dir)."`")->row_array();
-		$table['sql'] = str_replace(array($sql['Table'], 'CREATE TABLE'), array('{tablename}', 'CREATE TABLE IF NOT EXISTS'), $sql['Create Table']);
-		$field = $this->db
-					  ->where('relatedname', 'module')
-					  ->where('relatedid', (int)$module['id'])
-					  ->where('ismain', 1)
-					  ->get('field')
-					  ->result_array();
-		if (!$field) {
+        $file = FCPATH.'module/'.$dir.'/config/main.table.php';
+        $table = array();
+        $header = $this->dconfig->file($file)->note('主表结构（由开发者定义）')->to_header();
+        $sql = $this->db->query("SHOW CREATE TABLE `".$this->db->dbprefix(SITE_ID.'_'.$dir)."`")->row_array();
+        $table['sql'] = str_replace(array($sql['Table'], 'CREATE TABLE'), array('{tablename}', 'CREATE TABLE IF NOT EXISTS'), $sql['Create Table']);
+        $field = $this->db
+            ->where('relatedname', 'module')
+            ->where('relatedid', (int)$module['id'])
+            ->where('ismain', 1)
+            ->get('field')
+            ->result_array();
+        if (!$field) {
             return '此模块无主表字段，不支持生成';
         }
-		foreach ($field as $t) {
-			$t['textname'] = $t['name'];
-			unset($t['id'], $t['name']);
-			$t['issystem'] = 1;
-			$t['setting'] = dr_string2array($t['setting']);
-			$table['field'][] = $t;
-		}
-		file_put_contents($file, $header.PHP_EOL.'return '.var_export($table, true).';?>');
-		
-		// 附表字段
-		$file = FCPATH.'module/'.$dir.'/config/data.table.php';
-		$table = array();
-		$header = $this->dconfig->file($file)->note('附表结构（由开发者定义）')->to_header();
-		$sql = $this->db->query("SHOW CREATE TABLE `".$this->db->dbprefix(SITE_ID.'_'.$dir.'_data_0')."`")->row_array();
-		$table['sql'] = str_replace(array($sql['Table'], 'CREATE TABLE'), array('{tablename}', 'CREATE TABLE IF NOT EXISTS'), $sql['Create Table']);
-		$field = $this->db
-					  ->where('relatedname', 'module')
-					  ->where('relatedid', (int)$module['id'])
-					  ->where('ismain', 0)
-					  ->get('field')
-					  ->result_array();
-		if ($field) {
-			foreach ($field as $t) {
-				$t['textname'] = $t['name'];
-				unset($t['id'], $t['name']);
-				$t['issystem'] = 1;
-				$t['setting'] = dr_string2array($t['setting']);
-				$table['field'][] = $t;
-			}
-		}
-		file_put_contents($file, $header.PHP_EOL.'return '.var_export($table, true).';?>');
-		
-		if ($config['extend']) {
-			// 内容扩展表字段
-			$file = FCPATH.'module/'.$dir.'/config/extend.main.table.php';
-			$table = array();
-			$header = $this->dconfig->file($file)->note('内容扩展表结构（由开发者定义）')->to_header();
-			$sql = $this->db->query("SHOW CREATE TABLE `".$this->db->dbprefix(SITE_ID.'_'.$dir.'_extend')."`")->row_array();
-			$table['sql'] = str_replace(array($sql['Table'], 'CREATE TABLE'), array('{tablename}', 'CREATE TABLE IF NOT EXISTS'), $sql['Create Table']);
-			$field = $this->db->where('relatedname', 'extend')->where('relatedid', (int)$module['id'])->get('field')->result_array();
-			if ($field) {
-				foreach ($field as $t) {
-					$t['textname'] = $t['name'];
-					unset($t['id'], $t['name']);
-					$t['issystem'] = 1;
-					$t['setting'] = dr_string2array($t['setting']);
-					$table['field'][] = $t;
-				}
-			}
-			file_put_contents($file, $header.PHP_EOL.'return '.var_export($table, true).';?>');
+        foreach ($field as $t) {
+            $t['textname'] = $t['name'];
+            unset($t['id'], $t['name']);
+            $t['issystem'] = 1;
+            $t['setting'] = dr_string2array($t['setting']);
+            $table['field'][] = $t;
+        }
+        file_put_contents($file, $header.PHP_EOL.'return '.var_export($table, true).';?>');
+
+        // 附表字段
+        $file = FCPATH.'module/'.$dir.'/config/data.table.php';
+        $table = array();
+        $header = $this->dconfig->file($file)->note('附表结构（由开发者定义）')->to_header();
+        $sql = $this->db->query("SHOW CREATE TABLE `".$this->db->dbprefix(SITE_ID.'_'.$dir.'_data_0')."`")->row_array();
+        $table['sql'] = str_replace(array($sql['Table'], 'CREATE TABLE'), array('{tablename}', 'CREATE TABLE IF NOT EXISTS'), $sql['Create Table']);
+        $field = $this->db
+            ->where('relatedname', 'module')
+            ->where('relatedid', (int)$module['id'])
+            ->where('ismain', 0)
+            ->get('field')
+            ->result_array();
+        if ($field) {
+            foreach ($field as $t) {
+                $t['textname'] = $t['name'];
+                unset($t['id'], $t['name']);
+                $t['issystem'] = 1;
+                $t['setting'] = dr_string2array($t['setting']);
+                $table['field'][] = $t;
+            }
+        }
+        file_put_contents($file, $header.PHP_EOL.'return '.var_export($table, true).';?>');
+
+        if ($config['extend']) {
+            // 内容扩展表字段
+            $file = FCPATH.'module/'.$dir.'/config/extend.main.table.php';
+            $table = array();
+            $header = $this->dconfig->file($file)->note('内容扩展表结构（由开发者定义）')->to_header();
+            $sql = $this->db->query("SHOW CREATE TABLE `".$this->db->dbprefix(SITE_ID.'_'.$dir.'_extend')."`")->row_array();
+            $table['sql'] = str_replace(array($sql['Table'], 'CREATE TABLE'), array('{tablename}', 'CREATE TABLE IF NOT EXISTS'), $sql['Create Table']);
+            $field = $this->db->where('relatedname', 'extend')->where('relatedid', (int)$module['id'])->get('field')->result_array();
+            if ($field) {
+                foreach ($field as $t) {
+                    $t['textname'] = $t['name'];
+                    unset($t['id'], $t['name']);
+                    $t['issystem'] = 1;
+                    $t['setting'] = dr_string2array($t['setting']);
+                    $table['field'][] = $t;
+                }
+            }
+            file_put_contents($file, $header.PHP_EOL.'return '.var_export($table, true).';?>');
 
             // 内容扩展附表字段
             $file = FCPATH.'module/'.$dir.'/config/extend.data.table.php';
@@ -526,55 +526,55 @@ class Module_model extends CI_Model {
                 }
             }
             file_put_contents($file, $header.PHP_EOL.'return '.var_export($table, true).';?>');
-		}
+        }
 
-		// 导出表单
-		$this->export_form($dir);
-		
-		return NULL;
-	}
-	
-	// 导出表单
-	public function export_form($dir) {
+        // 导出表单
+        $this->export_form($dir);
 
-		$form = $this->db->where('module', $dir)->get('module_form')->result_array();
-		if ($form) {
-			$fdata = array();
-			foreach ($form as $t) {
+        return NULL;
+    }
+
+    // 导出表单
+    public function export_form($dir) {
+
+        $form = $this->db->where('module', $dir)->get('module_form')->result_array();
+        if ($form) {
+            $fdata = array();
+            foreach ($form as $t) {
                 $table = $this->db->dbprefix(SITE_ID.'_'.$dir.'_form_'.$t['table']);
                 // 主表
-				$sql = $this->db->query("SHOW CREATE TABLE `".$table."`")->row_array();
-				$sql = str_replace(array($sql['Table'], 'CREATE TABLE'), array('{tablename}', 'CREATE TABLE IF NOT EXISTS'), $sql['Create Table']);
-				// 附表
+                $sql = $this->db->query("SHOW CREATE TABLE `".$table."`")->row_array();
+                $sql = str_replace(array($sql['Table'], 'CREATE TABLE'), array('{tablename}', 'CREATE TABLE IF NOT EXISTS'), $sql['Create Table']);
+                // 附表
                 $sql2 = $this->db->query("SHOW CREATE TABLE `".$table."_data_0`")->row_array();
-				$sql2 = str_replace(array($sql2['Table'], 'CREATE TABLE'), array('{tablename}', 'CREATE TABLE IF NOT EXISTS'), $sql2['Create Table']);
-				// 模块表单的自定义字段
-				$field = $this->db->where('disabled', 0)->where('relatedid', (int)$t['id'])->where('relatedname', 'mform-'.$dir)->order_by('displayorder ASC, id ASC')->get('field')->result_array();
-				$fdata[$t['id']] = array(
-					'sql' => $sql,
-					'sql2' => $sql2,
-					'data' => $t,
-					'field' => $field,
-				);
-			}
-			$file = FCPATH.'module/'.$dir.'/config/form.php';
-			$this->load->library('dconfig');
-			$header = $this->dconfig->file($file)->note('表单的结构（此文件由导出产生，无需开发者定义）')->to_header();
-			file_put_contents($file, $header.PHP_EOL.'return '.var_export($fdata, true).';?>');
-		}
-	}
-	
-	// 导入表单
-	public function import_form($dir, $siteid) {
+                $sql2 = str_replace(array($sql2['Table'], 'CREATE TABLE'), array('{tablename}', 'CREATE TABLE IF NOT EXISTS'), $sql2['Create Table']);
+                // 模块表单的自定义字段
+                $field = $this->db->where('disabled', 0)->where('relatedid', (int)$t['id'])->where('relatedname', 'mform-'.$dir)->order_by('displayorder ASC, id ASC')->get('field')->result_array();
+                $fdata[$t['id']] = array(
+                    'sql' => $sql,
+                    'sql2' => $sql2,
+                    'data' => $t,
+                    'field' => $field,
+                );
+            }
+            $file = FCPATH.'module/'.$dir.'/config/form.php';
+            $this->load->library('dconfig');
+            $header = $this->dconfig->file($file)->note('表单的结构（此文件由导出产生，无需开发者定义）')->to_header();
+            file_put_contents($file, $header.PHP_EOL.'return '.var_export($fdata, true).';?>');
+        }
+    }
 
-		$file = FCPATH.'module/'.$dir.'/config/form.php';
-		if (!is_file($file)) {
+    // 导入表单
+    public function import_form($dir, $siteid) {
+
+        $file = FCPATH.'module/'.$dir.'/config/form.php';
+        if (!is_file($file)) {
             return FALSE;
         }
 
         // 生成的表单配置文件
-		$data = require_once $file;
-		if (!$data) {
+        $data = require_once $file;
+        if (!$data) {
             return FALSE;
         }
 
@@ -582,13 +582,13 @@ class Module_model extends CI_Model {
         $table = $this->db->dbprefix($siteid.'_'.$dir.'_form');
 
         // 循环导入配置表单
-		foreach ($data as $id => $form) {
-			// 插入表单
+        foreach ($data as $id => $form) {
+            // 插入表单
             $tablename = $form['data']['table'] ? $form['data']['table'] : ($form['data']['tablename'] ? $form['data']['tablename'] : SITE_ID.'_'.$form['data']['id']);
             unset($form['data']['id'],$form['data']['tablename']);
             $form['data']['module'] = $dir;
             $form['data']['table'] = $tablename;
-			$this->db->insert('module_form', $form['data']);
+            $this->db->insert('module_form', $form['data']);
             $id = $this->db->insert_id();
             // 创建主表
             $this->db->query('DROP TABLE IF EXISTS `'.$table.'_'.$tablename.'`');
@@ -612,58 +612,58 @@ class Module_model extends CI_Model {
                 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='表单附表';";
                 $this->db->query(trim($sql));
             }
-			// 添加字段
-			foreach ($form['field'] as $t) {
-				unset($t['id']);
-				$t['relatedid'] = $id;
-				$t['relatedname'] = 'mform-'.$dir;
-				$this->db->insert('field', $t);
-			}
-			$name = 'Form_'.$tablename;
-			// 创建管理控制器
-			$file = FCPATH.'module/'.$dir.'/controllers/admin/'.$name.'.php';
-			if (!is_file($file)) {
-				file_put_contents($file, '<?php'.PHP_EOL.PHP_EOL
-				.'require WEBPATH.\'branch/fqb/D_Admin_Form.php\';'.PHP_EOL.PHP_EOL
-				.'class '.$name.' extends D_Admin_Form {'.PHP_EOL.PHP_EOL
-				.'	public function __construct() {'.PHP_EOL
-				.'		parent::__construct();'.PHP_EOL
-				.'	}'.PHP_EOL
-				.'}');
-			}
-			// 会员控制器
-			$file = FCPATH.'module/'.$dir.'/controllers/member/'.$name.'.php';
-			if (!is_file($file)) {
-				file_put_contents($file, '<?php'.PHP_EOL.PHP_EOL
-				.'require FCPATH.\'branch/fqb/D_Member_Form.php\';'.PHP_EOL.PHP_EOL
-				.'class '.$name.' extends D_Member_Form {'.PHP_EOL.PHP_EOL
-				.'	public function __construct() {'.PHP_EOL
-				.'		parent::__construct();'.PHP_EOL
-				.'	}'.PHP_EOL
-				.'}');
-			}
-			// 前端发布控制器
-			$file = FCPATH.'module/'.$dir.'/controllers/'.$name.'.php';
-			if (!is_file($file)) {
-				file_put_contents($file, '<?php'.PHP_EOL.PHP_EOL
-				.'require FCPATH.\'branch/fqb/D_Home_Form.php\';'.PHP_EOL.PHP_EOL
-				.'class '.$name.' extends D_Home_Form {'.PHP_EOL.PHP_EOL
-				.'	public function __construct() {'.PHP_EOL
-				.'		parent::__construct();'.PHP_EOL
-				.'	}'.PHP_EOL
-				.'}');
-			}
+            // 添加字段
+            foreach ($form['field'] as $t) {
+                unset($t['id']);
+                $t['relatedid'] = $id;
+                $t['relatedname'] = 'mform-'.$dir;
+                $this->db->insert('field', $t);
+            }
+            $name = 'Form_'.$tablename;
+            // 创建管理控制器
+            $file = FCPATH.'module/'.$dir.'/controllers/admin/'.$name.'.php';
+            if (!is_file($file)) {
+                file_put_contents($file, '<?php'.PHP_EOL.PHP_EOL
+                    .'require WEBPATH.\'branch/fqb/D_Admin_Form.php\';'.PHP_EOL.PHP_EOL
+                    .'class '.$name.' extends D_Admin_Form {'.PHP_EOL.PHP_EOL
+                    .'	public function __construct() {'.PHP_EOL
+                    .'		parent::__construct();'.PHP_EOL
+                    .'	}'.PHP_EOL
+                    .'}');
+            }
+            // 会员控制器
+            $file = FCPATH.'module/'.$dir.'/controllers/member/'.$name.'.php';
+            if (!is_file($file)) {
+                file_put_contents($file, '<?php'.PHP_EOL.PHP_EOL
+                    .'require FCPATH.\'branch/fqb/D_Member_Form.php\';'.PHP_EOL.PHP_EOL
+                    .'class '.$name.' extends D_Member_Form {'.PHP_EOL.PHP_EOL
+                    .'	public function __construct() {'.PHP_EOL
+                    .'		parent::__construct();'.PHP_EOL
+                    .'	}'.PHP_EOL
+                    .'}');
+            }
+            // 前端发布控制器
+            $file = FCPATH.'module/'.$dir.'/controllers/'.$name.'.php';
+            if (!is_file($file)) {
+                file_put_contents($file, '<?php'.PHP_EOL.PHP_EOL
+                    .'require FCPATH.\'branch/fqb/D_Home_Form.php\';'.PHP_EOL.PHP_EOL
+                    .'class '.$name.' extends D_Home_Form {'.PHP_EOL.PHP_EOL
+                    .'	public function __construct() {'.PHP_EOL
+                    .'		parent::__construct();'.PHP_EOL
+                    .'	}'.PHP_EOL
+                    .'}');
+            }
             // 查询后台模块的菜单
             $menu = $this->db
-                         ->where('pid<>0')
-                         ->where('uri', '')
-                         ->where('mark', 'module-'.$dir)
-                         ->order_by('displayorder ASC,id ASC')
-                         ->get('admin_menu')
-                         ->row_array();
+                ->where('pid<>0')
+                ->where('uri', '')
+                ->where('mark', 'module-'.$dir)
+                ->order_by('displayorder ASC,id ASC')
+                ->get('admin_menu')
+                ->row_array();
             if ($menu) {
                 // 将此表单放在模块菜单中
-				$this->system_model->add_admin_menu(array(
+                $this->system_model->add_admin_menu(array(
                     'uri' => $dir.'/admin/'.strtolower($name).'/index',
                     'url' => '',
                     'pid' => $menu['id'],
@@ -674,120 +674,120 @@ class Module_model extends CI_Model {
                     'displayorder' => 0,
                 ));
             }
-			// 查询表单
-			$form = $this->db->where('module', $dir)->get('module_form')->result_array();
-			if ($form) {
-				$top = $this->db->where('mark', 'm_mod')->where('pid', 0)->get('member_menu')->row_array();
-				$left = $this->db->where('mark', 'left-'.$dir)->where('pid', (int)$top['id'])->get('member_menu')->row_array();
-				if ($top && $left) {
-					// 将此表单放在模块菜单中
-					foreach ($form as $f) {
-						$this->db->insert('member_menu', array(
-							'pid' => $left['id'],
-							'url' => '',
-							'uri' => $dir.'/form_'.$f['table'].'/index',
-							'mark' => 'module-'.$dir,
-							'name' => fc_lang('我的%s', $f['name']),
-							'icon' => isset($f['setting']['icon']) && $f['setting']['icon'] ? $f['setting']['icon'] : 'fa fa-th-large',
-							'target' => 0,
-							'hidden' => 0,
-							'displayorder' => 0,
-						));
-					}
-				}
-			}
-		}
-		
-		return TRUE;
-	}
-	
-	/**
-	 * 字段入库
-	 *
-	 * @param	intval	$id		模块id
-	 * @param	array	$field	字段信息
-	 * @param	intval	$ismain	是否主表
-	 * @param	intval	$extend	是否是扩展表
-	 * @return	bool
-	 */
-	private function add_field($id, $field, $ismain, $extend = 0) {
-
-		$rname = $extend ? 'extend' : 'module';
-		if ($this->db->where('fieldname', $field['fieldname'])->where('relatedid', (int)$id)->where('relatedname', $rname)->count_all_results('field')) {
-			return;
-		}
-
-		$this->db->insert('field', array(
-			'name' => $field['textname'],
-			'ismain' => $ismain,
-			'setting' => dr_array2string($field['setting']),
-			'issystem' => isset($field['issystem']) ? (int)$field['issystem'] : 1,
-			'ismember' => isset($field['ismember']) ? (int)$field['ismember'] : 1,
-			'disabled' => isset($field['disabled']) ? (int)$field['disabled'] : 0,
-			'fieldname' => $field['fieldname'],
-			'fieldtype' => $field['fieldtype'],
-			'relatedid' => (int)$id,
-			'relatedname' => $rname,
-			'displayorder' => (int)$field['displayorder'],
-		));
-	}
-	
-	/**
-	 * 安装到站点
-	 *
-	 * @param	intval	$id		    模块id
-	 * @param	string	$dir	    模块目录
-	 * @param	array	$siteid	    站点id
-	 * @param	array	$config	    模块配置
-     * @param	intval	$nodb       是否自定义数据模块
-     * @param	intval	$_siteid    已经安装过的站点id
-	 * @return	void
-	 */
-	public function install($id, $dir, $siteid, $config, $nodb = 0, $_siteid = 0) {
-
-		if (!$id || !$dir || !$siteid) {
-            return 'id、dir、siteid不完整';
-        } elseif (!isset($this->db)) {
-		    return 'db为空';
+            // 查询表单
+            $form = $this->db->where('module', $dir)->get('module_form')->result_array();
+            if ($form) {
+                $top = $this->db->where('mark', 'm_mod')->where('pid', 0)->get('member_menu')->row_array();
+                $left = $this->db->where('mark', 'left-'.$dir)->where('pid', (int)$top['id'])->get('member_menu')->row_array();
+                if ($top && $left) {
+                    // 将此表单放在模块菜单中
+                    foreach ($form as $f) {
+                        $this->db->insert('member_menu', array(
+                            'pid' => $left['id'],
+                            'url' => '',
+                            'uri' => $dir.'/form_'.$f['table'].'/index',
+                            'mark' => 'module-'.$dir,
+                            'name' => fc_lang('我的%s', $f['name']),
+                            'icon' => isset($f['setting']['icon']) && $f['setting']['icon'] ? $f['setting']['icon'] : 'fa fa-th-large',
+                            'target' => 0,
+                            'hidden' => 0,
+                            'displayorder' => 0,
+                        ));
+                    }
+                }
+            }
         }
 
-		if ($dir == 'space') {
+        return TRUE;
+    }
+
+    /**
+     * 字段入库
+     *
+     * @param	intval	$id		模块id
+     * @param	array	$field	字段信息
+     * @param	intval	$ismain	是否主表
+     * @param	intval	$extend	是否是扩展表
+     * @return	bool
+     */
+    private function add_field($id, $field, $ismain, $extend = 0) {
+
+        $rname = $extend ? 'extend' : 'module';
+        if ($this->db->where('fieldname', $field['fieldname'])->where('relatedid', (int)$id)->where('relatedname', $rname)->count_all_results('field')) {
+            return;
+        }
+
+        $this->db->insert('field', array(
+            'name' => $field['textname'],
+            'ismain' => $ismain,
+            'setting' => dr_array2string($field['setting']),
+            'issystem' => isset($field['issystem']) ? (int)$field['issystem'] : 1,
+            'ismember' => isset($field['ismember']) ? (int)$field['ismember'] : 1,
+            'disabled' => isset($field['disabled']) ? (int)$field['disabled'] : 0,
+            'fieldname' => $field['fieldname'],
+            'fieldtype' => $field['fieldtype'],
+            'relatedid' => (int)$id,
+            'relatedname' => $rname,
+            'displayorder' => (int)$field['displayorder'],
+        ));
+    }
+
+    /**
+     * 安装到站点
+     *
+     * @param	intval	$id		    模块id
+     * @param	string	$dir	    模块目录
+     * @param	array	$siteid	    站点id
+     * @param	array	$config	    模块配置
+     * @param	intval	$nodb       是否自定义数据模块
+     * @param	intval	$_siteid    已经安装过的站点id
+     * @return	void
+     */
+    public function install($id, $dir, $siteid, $config, $nodb = 0, $_siteid = 0) {
+
+        if (!$id || !$dir || !$siteid) {
+            return 'id、dir、siteid不完整';
+        } elseif (!isset($this->db)) {
+            return 'db为空';
+        }
+
+        if ($dir == 'space') {
             // 菜单隐藏
             $this->db->where('mark', 'myspace')->update('admin_menu', array('hidden' => 0));
             $this->db->where('mark', 'space-content')->update('admin_menu', array('hidden' => 0));
             $this->db->where('mark', 'template-space')->update('admin_menu', array('hidden' => 0));
-			// 安装空间黄页
-			if (is_file(FCPATH.'module/'.$dir.'/config/install.sql') && $uninstall = file_get_contents(FCPATH.'module/'.$dir.'/config/install.sql')) {
-				$_sql = str_replace(
-					array('{dbprefix}'),
-					array($this->db->dbprefix),
-					$uninstall
-				);
-				$sql_data = explode(';SQL_FINECMS_EOL', trim(str_replace(array(PHP_EOL, chr(13), chr(10)), 'SQL_FINECMS_EOL', $_sql)));
-				foreach($sql_data as $query){
-					if (!$query) {
-						continue;
-					}
-					$ret = '';
-					$queries = explode('SQL_FINECMS_EOL', trim($query));
-					foreach($queries as $query) {
-						$ret.= $query[0] == '#' || $query[0].$query[1] == '--' ? '' : $query;
-					}
-					if (!$ret) {
-						continue;
-					}
-					$this->db->query($ret);
-				}
-				unset($query, $sql_data, $_sql, $queries, $ret);
-			}
-			return;
-		}
+            // 安装空间黄页
+            if (is_file(FCPATH.'module/'.$dir.'/config/install.sql') && $uninstall = file_get_contents(FCPATH.'module/'.$dir.'/config/install.sql')) {
+                $_sql = str_replace(
+                    array('{dbprefix}'),
+                    array($this->db->dbprefix),
+                    $uninstall
+                );
+                $sql_data = explode(';SQL_FINECMS_EOL', trim(str_replace(array(PHP_EOL, chr(13), chr(10)), 'SQL_FINECMS_EOL', $_sql)));
+                foreach($sql_data as $query){
+                    if (!$query) {
+                        continue;
+                    }
+                    $ret = '';
+                    $queries = explode('SQL_FINECMS_EOL', trim($query));
+                    foreach($queries as $query) {
+                        $ret.= $query[0] == '#' || $query[0].$query[1] == '--' ? '' : $query;
+                    }
+                    if (!$ret) {
+                        continue;
+                    }
+                    $this->db->query($ret);
+                }
+                unset($query, $sql_data, $_sql, $queries, $ret);
+            }
+            return;
+        }
 
-		$extend = (int)$config['extend'];
-		$install = NULL; // 初始化数据
+        $extend = (int)$config['extend'];
+        $install = NULL; // 初始化数据
 
-		// 表前缀部分：站点id_模块目录[_表名称]
-		$prefix = $this->db->dbprefix($siteid.'_'.$dir);
+        // 表前缀部分：站点id_模块目录[_表名称]
+        $prefix = $this->db->dbprefix($siteid.'_'.$dir);
 
         // 非系统表属性时才导入系统表
         if (!$nodb) {
@@ -879,10 +879,10 @@ class Module_model extends CI_Model {
             }
             // 系统默认表
             foreach ($this->system_table as $table => $sql) {
-				// 不是扩展模块就不执行扩展表
-				if (strpos($table, 'extend_') === 0 && !$extend) {
-					continue;
-				}
+                // 不是扩展模块就不执行扩展表
+                if (strpos($table, 'extend_') === 0 && !$extend) {
+                    continue;
+                }
                 $this->db->query('DROP TABLE IF EXISTS `'.$prefix.'_'.$table.'`');
                 $this->db->query(trim(str_replace('{tablename}', $prefix.'_'.$table, $sql)));
             }
@@ -894,25 +894,25 @@ class Module_model extends CI_Model {
             }
         }
 
-		// 插入初始化数据
-		if (is_file(FCPATH.'module/'.$dir.'/config/install.sql')
+        // 插入初始化数据
+        if (is_file(FCPATH.'module/'.$dir.'/config/install.sql')
             && $install = file_get_contents(FCPATH.'module/'.$dir.'/config/install.sql')) {
-			$_sql = str_replace(
-				array('{tablename}', '{dbprefix}', '{moduleid}', '{moduledir}', '{siteid}'), 
-				array($prefix, $this->db->dbprefix, $id, $dir, SITE_ID), 
-				$install
-			);
-			$sql_data = explode(';SQL_FINECMS_EOL', trim(str_replace(array(PHP_EOL, chr(13), chr(10)), 'SQL_FINECMS_EOL', $_sql)));
-			foreach($sql_data as $query) {
-				if (!$query) {
+            $_sql = str_replace(
+                array('{tablename}', '{dbprefix}', '{moduleid}', '{moduledir}', '{siteid}'),
+                array($prefix, $this->db->dbprefix, $id, $dir, SITE_ID),
+                $install
+            );
+            $sql_data = explode(';SQL_FINECMS_EOL', trim(str_replace(array(PHP_EOL, chr(13), chr(10)), 'SQL_FINECMS_EOL', $_sql)));
+            foreach($sql_data as $query) {
+                if (!$query) {
                     continue;
                 }
-				$ret = '';
-				$queries = explode('SQL_FINECMS_EOL', trim($query));
-				foreach($queries as $query) {
-					$ret.= $query[0] == '#' || $query[0].$query[1] == '--' ? '' : $query;
-				}
-				if (!$ret) {
+                $ret = '';
+                $queries = explode('SQL_FINECMS_EOL', trim($query));
+                foreach($queries as $query) {
+                    $ret.= $query[0] == '#' || $query[0].$query[1] == '--' ? '' : $query;
+                }
+                if (!$ret) {
                     continue;
                 }
                 // 如果此模块已经在其他站点中安装就不导入插入语句
@@ -921,9 +921,9 @@ class Module_model extends CI_Model {
                     continue;
                 }
                 $this->db->query($ret);
-			}
-			unset($query, $sql_data, $_sql, $queries, $ret);
-		}
+            }
+            unset($query, $sql_data, $_sql, $queries, $ret);
+        }
 
         // 安装表单
         if ($_siteid) {
@@ -954,231 +954,231 @@ class Module_model extends CI_Model {
             }
         } else {
             // 导入本地表单
-		    $this->import_form($dir, $siteid);
+            $this->import_form($dir, $siteid);
         }
 
         return 'ok';
-	}
-	
-	/**
-	 * 从站点中卸载
-	 *
-	 * @param	intval	$id		模块id
-	 * @param	string	$dir	模块目录
-	 * @param	array	$siteid	站点id
-	 * @param	intval	$delete	是否删除菜单
-	 * @return	void
-	 */
-	public function uninstall($id, $dir, $siteid, $delete = 0) {
-	
-		if (!$id || !$dir || !$siteid || !isset($this->db)) {
+    }
+
+    /**
+     * 从站点中卸载
+     *
+     * @param	intval	$id		模块id
+     * @param	string	$dir	模块目录
+     * @param	array	$siteid	站点id
+     * @param	intval	$delete	是否删除菜单
+     * @return	void
+     */
+    public function uninstall($id, $dir, $siteid, $delete = 0) {
+
+        if (!$id || !$dir || !$siteid || !isset($this->db)) {
             return NULL;
         }
-		
-		$config = require FCPATH.'module/'.$dir.'/config/module.php'; // 配置信息
-		$extend = (int)$config['extend'];
 
-		if ($dir == 'space') {
-			// 卸载空间黄页
-			$this->db->where('relatedname', 'space')->delete('field');
-			$this->db->where('relatedname', 'spacetable')->delete('field');
+        $config = require FCPATH.'module/'.$dir.'/config/module.php'; // 配置信息
+        $extend = (int)$config['extend'];
+
+        if ($dir == 'space') {
+            // 卸载空间黄页
+            $this->db->where('relatedname', 'space')->delete('field');
+            $this->db->where('relatedname', 'spacetable')->delete('field');
             // 菜单隐藏
             $this->db->where('mark', 'myspace')->update('admin_menu', array('hidden' => 1));
             $this->db->where('mark', 'space-content')->update('admin_menu', array('hidden' => 1));
             $this->db->where('mark', 'template-space')->update('admin_menu', array('hidden' => 1));
-			// 插入初始化数据
-			if (is_file(FCPATH.'module/'.$dir.'/config/uninstall.sql') && $uninstall = file_get_contents(FCPATH.'module/'.$dir.'/config/uninstall.sql')) {
-				$_sql = str_replace(
-					array('{dbprefix}'),
-					array($this->db->dbprefix),
-					$uninstall
-				);
-				$sql_data = explode(';SQL_FINECMS_EOL', trim(str_replace(array(PHP_EOL, chr(13), chr(10)), 'SQL_FINECMS_EOL', $_sql)));
-				foreach($sql_data as $query){
-					if (!$query) {
-						continue;
-					}
-					$ret = '';
-					$queries = explode('SQL_FINECMS_EOL', trim($query));
-					foreach($queries as $query) {
-						$ret.= $query[0] == '#' || $query[0].$query[1] == '--' ? '' : $query;
-					}
-					if (!$ret) {
-						continue;
-					}
-					$this->db->query($ret);
-				}
-				unset($query, $sql_data, $_sql, $queries, $ret);
-			}
-		} else {
+            // 插入初始化数据
+            if (is_file(FCPATH.'module/'.$dir.'/config/uninstall.sql') && $uninstall = file_get_contents(FCPATH.'module/'.$dir.'/config/uninstall.sql')) {
+                $_sql = str_replace(
+                    array('{dbprefix}'),
+                    array($this->db->dbprefix),
+                    $uninstall
+                );
+                $sql_data = explode(';SQL_FINECMS_EOL', trim(str_replace(array(PHP_EOL, chr(13), chr(10)), 'SQL_FINECMS_EOL', $_sql)));
+                foreach($sql_data as $query){
+                    if (!$query) {
+                        continue;
+                    }
+                    $ret = '';
+                    $queries = explode('SQL_FINECMS_EOL', trim($query));
+                    foreach($queries as $query) {
+                        $ret.= $query[0] == '#' || $query[0].$query[1] == '--' ? '' : $query;
+                    }
+                    if (!$ret) {
+                        continue;
+                    }
+                    $this->db->query($ret);
+                }
+                unset($query, $sql_data, $_sql, $queries, $ret);
+            }
+        } else {
 
 
-			// 表前缀部分：站点id_模块目录[_表名称]
-			$prefix = $this->db->dbprefix($siteid.'_'.$dir);
+            // 表前缀部分：站点id_模块目录[_表名称]
+            $prefix = $this->db->dbprefix($siteid.'_'.$dir);
 
-			// 清空附件
-			$this->load->model('attachment_model');
-			$this->attachment_model->delete_for_table($prefix, TRUE);
+            // 清空附件
+            $this->load->model('attachment_model');
+            $this->attachment_model->delete_for_table($prefix, TRUE);
 
-			// 判断是否为系统模块
-			$nodb = isset($config['nodb']) && $config['nodb'] ? 1 : 0;
-			if (!$nodb) {
-				// 主表
+            // 判断是否为系统模块
+            $nodb = isset($config['nodb']) && $config['nodb'] ? 1 : 0;
+            if (!$nodb) {
+                // 主表
                 $this->db->query('DROP TABLE IF EXISTS `'.$prefix.'`');
-				// 附表
-				for ($i = 0; $i < 100; $i ++) {
-					if (!$this->db->query("SHOW TABLES LIKE '".$prefix.'_data_'.$i."'")->row_array()) {
-						break;
-					}
+                // 附表
+                for ($i = 0; $i < 100; $i ++) {
+                    if (!$this->db->query("SHOW TABLES LIKE '".$prefix.'_data_'.$i."'")->row_array()) {
+                        break;
+                    }
                     $this->db->query('DROP TABLE IF EXISTS '.$prefix.'_data_'.$i);
-				}
-				// 卸载评论
-				$this->load->model('comment_model');
-				$this->comment_model->module($dir);
-				$this->comment_model->uninstall_sql($siteid);
-				// 扩展表
-				if ($extend) {
-					// 卸载扩展评论
-					$this->comment_model->extend($dir);
-					$this->comment_model->uninstall_sql($siteid);
-					// 主表
+                }
+                // 卸载评论
+                $this->load->model('comment_model');
+                $this->comment_model->module($dir);
+                $this->comment_model->uninstall_sql($siteid);
+                // 扩展表
+                if ($extend) {
+                    // 卸载扩展评论
+                    $this->comment_model->extend($dir);
+                    $this->comment_model->uninstall_sql($siteid);
+                    // 主表
                     $this->db->query('DROP TABLE IF EXISTS `'.$prefix.'_extend`');
-					// 附表
-					for ($i = 0; $i < 100; $i ++) {
-						if (!$this->db->query("SHOW TABLES LIKE '".$prefix.'_extend_data_'.$i."'")->row_array()) {
-							break;
-						}
+                    // 附表
+                    for ($i = 0; $i < 100; $i ++) {
+                        if (!$this->db->query("SHOW TABLES LIKE '".$prefix.'_extend_data_'.$i."'")->row_array()) {
+                            break;
+                        }
                         $this->db->query('DROP TABLE IF EXISTS '.$prefix.'_extend_data_'.$i);
-					}
-				}
-				// 表单数据表
-				$form = $this->db->where('module', $dir)->get('module_form')->result_array();
-				if ($form) {
-					foreach ($form as $t) {
+                    }
+                }
+                // 表单数据表
+                $form = $this->db->where('module', $dir)->get('module_form')->result_array();
+                if ($form) {
+                    foreach ($form as $t) {
                         $this->db->query('DROP TABLE IF EXISTS '.$prefix.'_form_'.$t['id']);
-						$this->attachment_model->delete_for_table($prefix.'_form_'.$t['id'], TRUE);
-					}
-				}
-				// 系统默认表
-				foreach ($this->system_table as $table => $sql) {
+                        $this->attachment_model->delete_for_table($prefix.'_form_'.$t['id'], TRUE);
+                    }
+                }
+                // 系统默认表
+                foreach ($this->system_table as $table => $sql) {
                     $this->db->query('DROP TABLE IF EXISTS `'.$prefix.'_'.$table.'`');
-				}
-				// 删除栏目字段
-				$this->db->where('relatedname', $dir.'-'.$siteid)->delete('field');
+                }
+                // 删除栏目字段
+                $this->db->where('relatedname', $dir.'-'.$siteid)->delete('field');
 
-			}
-			// 删除共享栏目中的相关栏目
+            }
+            // 删除共享栏目中的相关栏目
             $this->db->where('mid', $dir)->delete($siteid.'_share_category');
 
-			// 当站点数量小于2时删除菜单
-			if ($delete < 2) {
-				// 删除后台菜单
-				$this->db->where('mark', 'module-'.$dir)->delete('admin_menu');
-				$this->db->like('mark', 'module-'.$dir.'-%')->delete('admin_menu');
-				// 删除会员菜单
-				$this->db->where('mark', 'left-'.$dir)->delete('member_menu');
-				$this->db->where('mark', 'module-'.$dir)->delete('member_menu');
-				$this->db->like('mark', 'module-'.$dir.'-%')->delete('member_menu');
-			}
+            // 当站点数量小于2时删除菜单
+            if ($delete < 2) {
+                // 删除后台菜单
+                $this->db->where('mark', 'module-'.$dir)->delete('admin_menu');
+                $this->db->like('mark', 'module-'.$dir.'-%')->delete('admin_menu');
+                // 删除会员菜单
+                $this->db->where('mark', 'left-'.$dir)->delete('member_menu');
+                $this->db->where('mark', 'module-'.$dir)->delete('member_menu');
+                $this->db->like('mark', 'module-'.$dir.'-%')->delete('member_menu');
+            }
 
-			// 插入初始化数据
-			if (is_file(FCPATH.'module/'.$dir.'/config/uninstall.sql') && $uninstall = file_get_contents(FCPATH.'module/'.$dir.'/config/uninstall.sql')) {
-				$_sql = str_replace(
-					array('{tablename}', '{dbprefix}', '{moduleid}', '{moduledir}', '{siteid}'),
-					array($prefix, $this->db->dbprefix, $id, $dir, SITE_ID),
-					$uninstall
-				);
-				$sql_data = explode(';SQL_FINECMS_EOL', trim(str_replace(array(PHP_EOL, chr(13), chr(10)), 'SQL_FINECMS_EOL', $_sql)));
-				foreach($sql_data as $query){
-					if (!$query) {
-						continue;
-					}
-					$ret = '';
-					$queries = explode('SQL_FINECMS_EOL', trim($query));
-					foreach($queries as $query) {
-						$ret.= $query[0] == '#' || $query[0].$query[1] == '--' ? '' : $query;
-					}
-					if (!$ret) {
-						continue;
-					}
-					$this->db->query($ret);
-				}
-				unset($query, $sql_data, $_sql, $queries, $ret);
-			}
+            // 插入初始化数据
+            if (is_file(FCPATH.'module/'.$dir.'/config/uninstall.sql') && $uninstall = file_get_contents(FCPATH.'module/'.$dir.'/config/uninstall.sql')) {
+                $_sql = str_replace(
+                    array('{tablename}', '{dbprefix}', '{moduleid}', '{moduledir}', '{siteid}'),
+                    array($prefix, $this->db->dbprefix, $id, $dir, SITE_ID),
+                    $uninstall
+                );
+                $sql_data = explode(';SQL_FINECMS_EOL', trim(str_replace(array(PHP_EOL, chr(13), chr(10)), 'SQL_FINECMS_EOL', $_sql)));
+                foreach($sql_data as $query){
+                    if (!$query) {
+                        continue;
+                    }
+                    $ret = '';
+                    $queries = explode('SQL_FINECMS_EOL', trim($query));
+                    foreach($queries as $query) {
+                        $ret.= $query[0] == '#' || $query[0].$query[1] == '--' ? '' : $query;
+                    }
+                    if (!$ret) {
+                        continue;
+                    }
+                    $this->db->query($ret);
+                }
+                unset($query, $sql_data, $_sql, $queries, $ret);
+            }
 
-			// 删除应用相关表
-			$app = $this->ci->get_cache('app');
-			if ($app) {
-				foreach ($app as $adir) {
-					if (is_file(FCPATH.'module/'.$adir.'/models/'.$adir.'_model.php')) {
-						$this->load->add_package_path(FCPATH.'app/'.$adir.'/');
-						$this->load->model($adir.'_model', 'app_model');
-						$this->app_model->delete_for_module($dir, $siteid);
-						$this->load->remove_package_path(FCPATH.'app/'.$adir.'/');
-					}
-				}
-			}
-		}
+            // 删除应用相关表
+            $app = $this->ci->get_cache('app');
+            if ($app) {
+                foreach ($app as $adir) {
+                    if (is_file(FCPATH.'module/'.$adir.'/models/'.$adir.'_model.php')) {
+                        $this->load->add_package_path(FCPATH.'app/'.$adir.'/');
+                        $this->load->model($adir.'_model', 'app_model');
+                        $this->app_model->delete_for_module($dir, $siteid);
+                        $this->load->remove_package_path(FCPATH.'app/'.$adir.'/');
+                    }
+                }
+            }
+        }
 
-	}
-	
-	/**
-	 * 清空当前站点的模块数据
-	 *
-	 * @param	string	$dir	模块目录
-	 * @return	void
-	 */
-	public function clear($dir, $site) {
-	
-		if (!$dir) {
+    }
+
+    /**
+     * 清空当前站点的模块数据
+     *
+     * @param	string	$dir	模块目录
+     * @return	void
+     */
+    public function clear($dir, $site) {
+
+        if (!$dir) {
             return NULL;
         }
-		
-		$config = require FCPATH.'module/'.$dir.'/config/module.php'; // 配置信息
-		$extend = (int)$config['extend'];
 
-		// 表前缀部分：站点id_模块目录[_表名称]
-		$prefix = $this->db->dbprefix($site.'_'.$dir);
-		// 主表
+        $config = require FCPATH.'module/'.$dir.'/config/module.php'; // 配置信息
+        $extend = (int)$config['extend'];
+
+        // 表前缀部分：站点id_模块目录[_表名称]
+        $prefix = $this->db->dbprefix($site.'_'.$dir);
+        // 主表
         $this->db->query('TRUNCATE TABLE `'.$prefix.'`');
-		// 附表
-		for ($i = 0; $i < 100; $i ++) {
-			if (!$this->db->query("SHOW TABLES LIKE '".$prefix.'_data_'.$i."'")->row_array()) {
+        // 附表
+        for ($i = 0; $i < 100; $i ++) {
+            if (!$this->db->query("SHOW TABLES LIKE '".$prefix.'_data_'.$i."'")->row_array()) {
                 break;
             }
             $this->db->query('TRUNCATE TABLE '.$prefix.'_data_'.$i);
-		}
-		// 扩展模块
-		if ($extend) {
-		    // 主表
+        }
+        // 扩展模块
+        if ($extend) {
+            // 主表
             $this->db->query('TRUNCATE TABLE `'.$prefix.'_extend`');
-			// 扩展表
-			for ($i = 0; $i < 100; $i ++) {
-				if (!$this->db->query("SHOW TABLES LIKE '".$prefix.'_extend_data_'.$i."'")->row_array()) {
+            // 扩展表
+            for ($i = 0; $i < 100; $i ++) {
+                if (!$this->db->query("SHOW TABLES LIKE '".$prefix.'_extend_data_'.$i."'")->row_array()) {
                     break;
                 }
                 $this->db->query('TRUNCATE TABLE '.$prefix.'_extend_data_'.$i);
-			}
-		}
-		// 系统默认表
-		foreach ($this->system_table as $table => $sql) {
-			// 不是扩展模块就不执行扩展表
-			if (strpos($table, 'extend_') === 0 && !$extend) {
-				continue;
-			}
+            }
+        }
+        // 系统默认表
+        foreach ($this->system_table as $table => $sql) {
+            // 不是扩展模块就不执行扩展表
+            if (strpos($table, 'extend_') === 0 && !$extend) {
+                continue;
+            }
             $this->db->query('TRUNCATE TABLE `'.$prefix.'_'.$table.'`');
-		}
-		// 删除应用相关表
-		$app = $this->ci->get_cache('app');
-		if ($app) {
-			foreach ($app as $adir) {
-				if (is_file(FCPATH.'app/'.$adir.'/models/'.$adir.'_model.php')) {
-					$this->load->add_package_path(FCPATH.'app/'.$adir.'/');
-					$this->load->model($adir.'_model', 'app_model');
-					$this->app_model->delete_for_module($dir, $site);
-				}
-			}
-		}
+        }
+        // 删除应用相关表
+        $app = $this->ci->get_cache('app');
+        if ($app) {
+            foreach ($app as $adir) {
+                if (is_file(FCPATH.'app/'.$adir.'/models/'.$adir.'_model.php')) {
+                    $this->load->add_package_path(FCPATH.'app/'.$adir.'/');
+                    $this->load->model($adir.'_model', 'app_model');
+                    $this->app_model->delete_for_module($dir, $site);
+                }
+            }
+        }
         // 删除表单数据
         $form = $this->db->where('module', $dir)->get('module_form')->result_array();
         if ($form) {
@@ -1186,65 +1186,65 @@ class Module_model extends CI_Model {
                 $this->db->query('TRUNCATE TABLE '.$prefix.'_form_'.$t['id']);
             }
         }
-	}
-	
-	/**
-	 * 修改
-	 *
-	 * @param	array	$_data	老数据
-	 * @param	array	$data	新数据
-	 * @return	void
-	 */
-	public function edit($id, $data) {
-		$this->db->where('id', $id)->update('module', array(
+    }
+
+    /**
+     * 修改
+     *
+     * @param	array	$_data	老数据
+     * @param	array	$data	新数据
+     * @return	void
+     */
+    public function edit($id, $data) {
+        $this->db->where('id', $id)->update('module', array(
             'sitemap' => (int)$data['sitemap'],
             'setting' => dr_array2string($data['setting'])
-         ));
-	}
-	
-	/**
-	 * 删除
-	 *
-	 * @param	intval	$id
-	 * @return	void
-	 */
-	public function del($id) {
-		// 模块信息
-		$data = $this->get($id);
-		if (!$data) {
-            return NULL;
-        }
-		// 删除模块数据和卸载全部站点
-		$this->db->where('id', $id)->delete('module');
-		foreach ($data['site'] as $siteid => $url) {
-			$this->uninstall($data['id'], $data['dirname'], $siteid);
-            $this->db->where('relatedname', $data['dirname'].'-'.$siteid)->delete('field');
-		}
-		// 删除模块字段
-		$this->db->where('relatedname', 'module')->where('relatedid', (int)$id)->delete('field');
-		// 删除扩展字段
-		$this->db->where('relatedname', 'extend')->where('relatedid', (int)$id)->delete('field');
-		// 删除表单字段
-		$this->db->where('relatedname', 'mform-'.$data['dirname'])->delete('field');
-		// 删除表单
-		$this->db->where('module', $data['dirname'])->delete('module_form');
-	}
-	
-	/**
-	 * 格式化字段数据
-	 *
-	 * @param	array	$data	新数据
-	 * @return	array
-	 */
-	private function get_field_value($data) {
-		if (!$data) {
-            return NULL;
-        }
-		$data['setting'] = dr_string2array($data['setting']);
-		return $data;
-	}
+        ));
+    }
 
-	// 模块的共享栏目数据
+    /**
+     * 删除
+     *
+     * @param	intval	$id
+     * @return	void
+     */
+    public function del($id) {
+        // 模块信息
+        $data = $this->get($id);
+        if (!$data) {
+            return NULL;
+        }
+        // 删除模块数据和卸载全部站点
+        $this->db->where('id', $id)->delete('module');
+        foreach ($data['site'] as $siteid => $url) {
+            $this->uninstall($data['id'], $data['dirname'], $siteid);
+            $this->db->where('relatedname', $data['dirname'].'-'.$siteid)->delete('field');
+        }
+        // 删除模块字段
+        $this->db->where('relatedname', 'module')->where('relatedid', (int)$id)->delete('field');
+        // 删除扩展字段
+        $this->db->where('relatedname', 'extend')->where('relatedid', (int)$id)->delete('field');
+        // 删除表单字段
+        $this->db->where('relatedname', 'mform-'.$data['dirname'])->delete('field');
+        // 删除表单
+        $this->db->where('module', $data['dirname'])->delete('module_form');
+    }
+
+    /**
+     * 格式化字段数据
+     *
+     * @param	array	$data	新数据
+     * @return	array
+     */
+    private function get_field_value($data) {
+        if (!$data) {
+            return NULL;
+        }
+        $data['setting'] = dr_string2array($data['setting']);
+        return $data;
+    }
+
+    // 模块的共享栏目数据
     private function _get_share_category($siteid, $dir = '') {
 
         !$this->share_category[$siteid] && $this->share_category[$siteid] = $this->db->order_by('displayorder ASC, id ASC')->get($siteid.'_share_category')->result_array();
@@ -1268,181 +1268,181 @@ class Module_model extends CI_Model {
         return $category;
     }
 
-	
-	/**
-	 * 模块缓存
-	 *
-	 * @param	string	$data	模块
-	 * @return	NULL
-	 */
-	public function _cache($data) {
 
-		if (!is_array($data)) {
+    /**
+     * 模块缓存
+     *
+     * @param	string	$data	模块
+     * @return	NULL
+     */
+    public function _cache($data) {
+
+        if (!is_array($data)) {
             return NULL;
         }
 
         $dirname = $data['dirname'];
 
-		$this->load->library('dconfig');
+        $this->load->library('dconfig');
         // 加载站点域名配置文件
-		$site_domain = require WEBPATH.'config/domain.php';
+        $site_domain = require WEBPATH.'config/domain.php';
 
-		if ($dirname == 'share') {
-			// 共享模块
-			// 按站点生成缓存
-			foreach ($this->site_info as $siteid => $t) {
+        if ($dirname == 'share') {
+            // 共享模块
+            // 按站点生成缓存
+            foreach ($this->site_info as $siteid => $t) {
 
-				$cache = array(
-					'share' => 1,
-					'field' => array(
-						'thumb' => '',
-						'title' => '',
-						'keywords' => '',
-						'description' => '',
-					),
-					'dirname' => 'share',
-				);
+                $cache = array(
+                    'share' => 1,
+                    'field' => array(
+                        'thumb' => '',
+                        'title' => '',
+                        'keywords' => '',
+                        'description' => '',
+                    ),
+                    'dirname' => 'share',
+                );
 
-				// 模块的栏目分类
-				$cdir = $dirname;
-				//$share = array();
-				$category = $this->_get_share_category($siteid, '');
-				if ($category) {
+                // 模块的栏目分类
+                $cdir = $dirname;
+                //$share = array();
+                $category = $this->_get_share_category($siteid, '');
+                if ($category) {
                     $category_cache = $this->ci->get_cache('module-'.$siteid.'-'.$dirname, 'category');
-					$CAT = $CAT_DIR = $fenzhan = $level = array();
-					foreach ($category as $c) {
-						if ($c['domain']) {
-							$site_domain[$c['domain']] = $siteid;
-						}
-						$pid = explode(',', $c['pids']);
-						$level[] = substr_count($c['pids'], ',');
-						$c['mid'] = $c['tid'] == 1 ? $c['mid'] : '';
-						$c['topid'] = isset($pid[1]) ? $pid[1] : $c['id'];
-						$c['catids'] = explode(',', $c['childids']);
-						$c['domain'] = $c['domain'] ? dr_http_prefix($c['domain'].'/') : '';
-						$c['setting'] = dr_string2array($c['setting']);
-						$c['permission'] = $c['child'] && !$c['pcatpost'] ? '' : dr_string2array($c['permission']);
-						$c['url'] = isset($c['setting']['linkurl']) && $c['setting']['linkurl'] ? $c['setting']['linkurl'] : dr_category_url($cache, $c, 0, $siteid);
+                    $CAT = $CAT_DIR = $fenzhan = $level = array();
+                    foreach ($category as $c) {
+                        if ($c['domain']) {
+                            $site_domain[$c['domain']] = $siteid;
+                        }
+                        $pid = explode(',', $c['pids']);
+                        $level[] = substr_count($c['pids'], ',');
+                        $c['mid'] = $c['tid'] == 1 ? $c['mid'] : '';
+                        $c['topid'] = isset($pid[1]) ? $pid[1] : $c['id'];
+                        $c['catids'] = explode(',', $c['childids']);
+                        $c['domain'] = $c['domain'] ? dr_http_prefix($c['domain'].'/') : '';
+                        $c['setting'] = dr_string2array($c['setting']);
+                        $c['permission'] = $c['child'] && !$c['pcatpost'] ? '' : dr_string2array($c['permission']);
+                        $c['url'] = isset($c['setting']['linkurl']) && $c['setting']['linkurl'] ? $c['setting']['linkurl'] : dr_category_url($cache, $c, 0, $siteid);
                         $c['total'] = ($category_cache[$c['id']]['total']);
-						// 删除过期的部分
-						unset($c['setting']['urlmode']);
-						unset($c['setting']['url']);
-						$CAT[$c['id']] = $c;
-						$CAT_DIR[$c['dirname']] = $c['id'];
-						/*
-						if ($c['tid'] == 1 && $c['mid']) {
-							$share['id'][$c['id']] = $c['mid'];
-							$share['dir'][$c['dirname']] = $c['mid'];
-						}*/
-					}
+                        // 删除过期的部分
+                        unset($c['setting']['urlmode']);
+                        unset($c['setting']['url']);
+                        $CAT[$c['id']] = $c;
+                        $CAT_DIR[$c['dirname']] = $c['id'];
+                        /*
+                        if ($c['tid'] == 1 && $c['mid']) {
+                            $share['id'][$c['id']] = $c['mid'];
+                            $share['dir'][$c['dirname']] = $c['mid'];
+                        }*/
+                    }
 
-					// 栏目自定义字段，把父级栏目的字段合并至当前栏目
-					$field = $this->db
-								->where('disabled', 0)
-								->where('relatedname', $dirname.'-'.$siteid)
-								->order_by('displayorder ASC, id ASC')
-								->get('field')->result_array();
-					if ($field) {
-						foreach ($field as $f) {
-							if (isset($CAT[$f['relatedid']]['childids'])
-								&& $CAT[$f['relatedid']]['childids']) {
-								// 将该字段同时归类至其子栏目
-								$child = explode(',', $CAT[$f['relatedid']]['childids']);
-								foreach ($child as $catid) {
-									if ($CAT[$catid]) {
-										$CAT[$catid]['field'][$f['fieldname']] = $this->get_field_value($f);
-									}
-								}
-							}
-						}
-					}
-					$cache['category'] = $CAT;
-					$cache['category_dir'] = $CAT_DIR;
-					$cache['category_field'] = $field ? 1 : 0;
-					$cache['category_level'] = $level ? max($level) : 0;
-				} else {
-					$cache['category'] = array();
-					$cache['category_dir'] = array();
-					$cache['category_field'] = $cache['category_level'] = 0;
-				}
-				$this->dcache->set('module-'.$siteid.'-'.$dirname, $cache);
-			}
-			// 写入共享栏目配置文件
-			//$this->dconfig->file(WEBPATH.'config/route/category.php')->note('共享栏目路由配置')->space(32)->to_require($share);
-		} elseif (is_dir(FCPATH.'module/'.$dirname.'/')) {
-			// 独立模块
-			$config = require FCPATH.'module/'.$dirname.'/config/module.php'; // 配置信息
+                    // 栏目自定义字段，把父级栏目的字段合并至当前栏目
+                    $field = $this->db
+                        ->where('disabled', 0)
+                        ->where('relatedname', $dirname.'-'.$siteid)
+                        ->order_by('displayorder ASC, id ASC')
+                        ->get('field')->result_array();
+                    if ($field) {
+                        foreach ($field as $f) {
+                            if (isset($CAT[$f['relatedid']]['childids'])
+                                && $CAT[$f['relatedid']]['childids']) {
+                                // 将该字段同时归类至其子栏目
+                                $child = explode(',', $CAT[$f['relatedid']]['childids']);
+                                foreach ($child as $catid) {
+                                    if ($CAT[$catid]) {
+                                        $CAT[$catid]['field'][$f['fieldname']] = $this->get_field_value($f);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    $cache['category'] = $CAT;
+                    $cache['category_dir'] = $CAT_DIR;
+                    $cache['category_field'] = $field ? 1 : 0;
+                    $cache['category_level'] = $level ? max($level) : 0;
+                } else {
+                    $cache['category'] = array();
+                    $cache['category_dir'] = array();
+                    $cache['category_field'] = $cache['category_level'] = 0;
+                }
+                $this->dcache->set('module-'.$siteid.'-'.$dirname, $cache);
+            }
+            // 写入共享栏目配置文件
+            //$this->dconfig->file(WEBPATH.'config/route/category.php')->note('共享栏目路由配置')->space(32)->to_require($share);
+        } elseif (is_dir(FCPATH.'module/'.$dirname.'/')) {
+            // 独立模块
+            $config = require FCPATH.'module/'.$dirname.'/config/module.php'; // 配置信息
 
-			$data['site'] = dr_string2array($data['site']);
-			$config['nodb'] = $dirname == 'weixin' ? 1 : intval($config['nodb']); // 将微信强制列入非系统数据表类型
-			$data['setting'] = dr_string2array($data['setting']);
+            $data['site'] = dr_string2array($data['site']);
+            $config['nodb'] = $dirname == 'weixin' ? 1 : intval($config['nodb']); // 将微信强制列入非系统数据表类型
+            $data['setting'] = dr_string2array($data['setting']);
 
-			// 模块表单数据
-			$form = $this->mform_cache;
+            // 模块表单数据
+            $form = $this->mform_cache;
 
-			// 按站点生成缓存
-			foreach ($this->site_info as $siteid => $t) {
-				$cache = $data;
+            // 按站点生成缓存
+            foreach ($this->site_info as $siteid => $t) {
+                $cache = $data;
                 $this->dcache->set('module-'.$siteid.'-'.$dirname, array());
-				if (isset($data['site'][$siteid]['use']) && $data['site'][$siteid]['use']) {
-					// 模块域名
-					$domain = $data['site'][$siteid]['domain'];
-					if ($domain) {
-						$site_domain[$domain] = $siteid;
-					}
+                if (isset($data['site'][$siteid]['use']) && $data['site'][$siteid]['use']) {
+                    // 模块域名
+                    $domain = $data['site'][$siteid]['domain'];
+                    if ($domain) {
+                        $site_domain[$domain] = $siteid;
+                    }
                     $mobile_domain = $data['site'][$siteid]['mobile_domain'];
-					if ($mobile_domain) {
-						$site_domain[$mobile_domain] = $siteid;
-					}
-					// 将站点保存至域名配置文件
-					$cache['html'] = $data['site'][$siteid]['html'];
-					$cache['domain'] = $domain ? dr_http_prefix($domain.'/') : '';
-					$cache['mobile_domain'] = $mobile_domain ? dr_http_prefix($mobile_domain.'/') : '';
-					// 模块的URL地址
-					$cache['url'] = dr_module_url($cache, $siteid);
-					// 模块的自定义字段
-					$field = $this->db
-								->where('disabled', 0)
-								->where('relatedid', (int)$data['id'])
-								->where('relatedname', 'module')
-								->order_by('displayorder ASC, id ASC')
-								->get('field')->result_array();
-					if ($field) {
-						foreach ($field as $f) {
-							$cache['field'][$f['fieldname']] = $this->get_field_value($f);
-						}
-					} else {
-						$cache['field'] = array();
-					}
-					// 模块扩展的自定义字段
-					if ($data['extend']) {
-						$field = $this->db
-									->where('disabled', 0)
-									->where('relatedid', (int)$data['id'])
-									->where('relatedname', 'extend')
-									->order_by('displayorder ASC, id ASC')
-									->get('field')->result_array();
-						$cache['extend'] = array();
-						if ($field) {
-							foreach ($field as $f) {
-								$cache['extend'][$f['fieldname']] = $this->get_field_value($f);
-							}
-						}
-					} else {
-						$cache['extend'] = 0;
-					}
-					// 模块表单归类
-					$cache['form'] = isset($form[$dirname]) ? $form[$dirname] : array();
-					// 模块表创建统计字段
-					if ($cache['form']) {
-						foreach ($cache['form'] as $fm) {
-							$this->system_model->create_form_total_field($siteid, $dirname, $fm['table'], 1);
-						}
-					}
-					// 系统模块格式
-					if ($config['nodb'] == 0) {
-						// 模块的栏目分类
-						// 判断关联栏目
+                    if ($mobile_domain) {
+                        $site_domain[$mobile_domain] = $siteid;
+                    }
+                    // 将站点保存至域名配置文件
+                    $cache['html'] = $data['site'][$siteid]['html'];
+                    $cache['domain'] = $domain ? dr_http_prefix($domain.'/') : '';
+                    $cache['mobile_domain'] = $mobile_domain ? dr_http_prefix($mobile_domain.'/') : '';
+                    // 模块的URL地址
+                    $cache['url'] = dr_module_url($cache, $siteid);
+                    // 模块的自定义字段
+                    $field = $this->db
+                        ->where('disabled', 0)
+                        ->where('relatedid', (int)$data['id'])
+                        ->where('relatedname', 'module')
+                        ->order_by('displayorder ASC, id ASC')
+                        ->get('field')->result_array();
+                    if ($field) {
+                        foreach ($field as $f) {
+                            $cache['field'][$f['fieldname']] = $this->get_field_value($f);
+                        }
+                    } else {
+                        $cache['field'] = array();
+                    }
+                    // 模块扩展的自定义字段
+                    if ($data['extend']) {
+                        $field = $this->db
+                            ->where('disabled', 0)
+                            ->where('relatedid', (int)$data['id'])
+                            ->where('relatedname', 'extend')
+                            ->order_by('displayorder ASC, id ASC')
+                            ->get('field')->result_array();
+                        $cache['extend'] = array();
+                        if ($field) {
+                            foreach ($field as $f) {
+                                $cache['extend'][$f['fieldname']] = $this->get_field_value($f);
+                            }
+                        }
+                    } else {
+                        $cache['extend'] = 0;
+                    }
+                    // 模块表单归类
+                    $cache['form'] = isset($form[$dirname]) ? $form[$dirname] : array();
+                    // 模块表创建统计字段
+                    if ($cache['form']) {
+                        foreach ($cache['form'] as $fm) {
+                            $this->system_model->create_form_total_field($siteid, $dirname, $fm['table'], 1);
+                        }
+                    }
+                    // 系统模块格式
+                    if ($config['nodb'] == 0) {
+                        // 模块的栏目分类
+                        // 判断关联栏目
                         if ($data['share']) {
                             $cdir = 'share';
                             $category = $this->_get_share_category($siteid, $dirname);
@@ -1450,88 +1450,88 @@ class Module_model extends CI_Model {
                             $cdir = ($config['category'] ? $config['category'] : $dirname);
                             $category = $this->db->order_by('displayorder ASC, id ASC')->get($siteid.'_'.$cdir.'_category')->result_array();
                         }
-						if ($category) {
+                        if ($category) {
                             $category_cache = $this->ci->get_cache('module-'.$siteid.'-'.$dirname, 'category');
-							$CAT = $CAT_DIR = $fenzhan = $level = array();
-							foreach ($category as $c) {
-								$pid = explode(',', $c['pids']);
-								$level[] = substr_count($c['pids'], ',');
-								$c['mid'] = isset($c['mid']) ? $c['mid'] : $cache['dirname'];
-								$c['topid'] = isset($pid[1]) ? $pid[1] : $c['id'];
-								$c['domain'] = isset($c['domain']) ? $c['domain'] : $cache['domain'];
-								$c['catids'] = explode(',', $c['childids']);
-								$c['setting'] = dr_string2array($c['setting']);
-								$c['pcatpost'] = intval($cache['setting']['pcatpost']);
-								$c['setting']['html'] = $cdir == 'share' ? intval($c['setting']['html']) : $cache['html'];
-								$c['setting']['urlrule'] = intval($c['setting']['urlrule'] ? $c['setting']['urlrule'] : $cache['site'][$siteid]['urlrule']);
-								$c['permission'] = $c['child'] && !$data['setting']['pcatpost'] ? '' : dr_string2array($c['permission']);
-								$c['url'] = isset($c['setting']['linkurl']) && $c['setting']['linkurl'] ? $c['setting']['linkurl'] : dr_category_url($cache, $c, 0, $siteid);
+                            $CAT = $CAT_DIR = $fenzhan = $level = array();
+                            foreach ($category as $c) {
+                                $pid = explode(',', $c['pids']);
+                                $level[] = substr_count($c['pids'], ',');
+                                $c['mid'] = isset($c['mid']) ? $c['mid'] : $cache['dirname'];
+                                $c['topid'] = isset($pid[1]) ? $pid[1] : $c['id'];
+                                $c['domain'] = isset($c['domain']) ? $c['domain'] : $cache['domain'];
+                                $c['catids'] = explode(',', $c['childids']);
+                                $c['setting'] = dr_string2array($c['setting']);
+                                $c['pcatpost'] = intval($cdir == 'share' ? $c['pcatpost'] : $cache['setting']['pcatpost']);
+                                $c['setting']['html'] = $cdir == 'share' ? intval($c['setting']['html']) : $cache['html'];
+                                $c['setting']['urlrule'] = intval($c['setting']['urlrule'] ? $c['setting']['urlrule'] : $cache['site'][$siteid]['urlrule']);
+                                $c['permission'] = $c['child'] && !$c['setting']['pcatpost'] ? '' : dr_string2array($c['permission']);
+                                $c['url'] = isset($c['setting']['linkurl']) && $c['setting']['linkurl'] ? $c['setting']['linkurl'] : dr_category_url($cache, $c, 0, $siteid);
                                 $c['total'] = ($category_cache[$c['id']]['total']);
                                 // 删除过期的部分
-								unset($c['setting']['urlmode']);
-								unset($c['setting']['url']);
-								$CAT[$c['id']] = $c;
-								$CAT_DIR[$c['dirname']] = $c['id'];
+                                unset($c['setting']['urlmode']);
+                                unset($c['setting']['url']);
+                                $CAT[$c['id']] = $c;
+                                $CAT_DIR[$c['dirname']] = $c['id'];
 
-							}
+                            }
 
-							// 栏目自定义字段，把父级栏目的字段合并至当前栏目
-							$field = $this->db
-										->where('disabled', 0)
-										->where('relatedname', ($cache['share'] ? 'share' : $dirname).'-'.$siteid)
-										->order_by('displayorder ASC, id ASC')
-										->get('field')->result_array();
-							if ($field) {
-								foreach ($field as $f) {
-									if (isset($CAT[$f['relatedid']]['childids'])
-										&& $CAT[$f['relatedid']]['childids']) {
-										// 将该字段同时归类至其子栏目
-										$child = explode(',', $CAT[$f['relatedid']]['childids']);
-										foreach ($child as $catid) {
-											$CAT[$catid] && $CAT[$catid]['field'][$f['fieldname']] = $this->get_field_value($f);
-										}
-									}
-								}
-							}
-							$cache['category'] = $CAT;
-							$cache['category_dir'] = $CAT_DIR;
-							$cache['category_field'] = $field ? 1 : 0;
-							$cache['category_level'] = $level ? max($level) : 0;
-						} else {
-							$cache['category'] = array();
-							$cache['category_dir'] = array();
-							$cache['category_field'] = $cache['category_level'] = 0;
-						}
-						$cache['is_system'] = 1;
+                            // 栏目自定义字段，把父级栏目的字段合并至当前栏目
+                            $field = $this->db
+                                ->where('disabled', 0)
+                                ->where('relatedname', ($cache['share'] ? 'share' : $dirname).'-'.$siteid)
+                                ->order_by('displayorder ASC, id ASC')
+                                ->get('field')->result_array();
+                            if ($field) {
+                                foreach ($field as $f) {
+                                    if (isset($CAT[$f['relatedid']]['childids'])
+                                        && $CAT[$f['relatedid']]['childids']) {
+                                        // 将该字段同时归类至其子栏目
+                                        $child = explode(',', $CAT[$f['relatedid']]['childids']);
+                                        foreach ($child as $catid) {
+                                            $CAT[$catid] && $CAT[$catid]['field'][$f['fieldname']] = $this->get_field_value($f);
+                                        }
+                                    }
+                                }
+                            }
+                            $cache['category'] = $CAT;
+                            $cache['category_dir'] = $CAT_DIR;
+                            $cache['category_field'] = $field ? 1 : 0;
+                            $cache['category_level'] = $level ? max($level) : 0;
+                        } else {
+                            $cache['category'] = array();
+                            $cache['category_dir'] = array();
+                            $cache['category_field'] = $cache['category_level'] = 0;
+                        }
+                        $cache['is_system'] = 1;
 
-					} else {
-						$cache['is_system'] = 0;
-					}
-					// 模块名称
-					$name = $this->db
-								->select('name,icon')
-								->where('pid', 0)
-								->where('mark', 'module-'.$dirname)
-								->get('admin_menu')
-								->row_array();
-					$cache['name'] = $name['name'] ? $name['name'] : $config['name'];
-					$cache['icon'] = $name['icon'] ? $name['icon'] : 'fa fa-square';
-					$this->dcache->set('module-'.$siteid.'-'.$dirname, $cache);
-				}
-			}
+                    } else {
+                        $cache['is_system'] = 0;
+                    }
+                    // 模块名称
+                    $name = $this->db
+                        ->select('name,icon')
+                        ->where('pid', 0)
+                        ->where('mark', 'module-'.$dirname)
+                        ->get('admin_menu')
+                        ->row_array();
+                    $cache['name'] = $name['name'] ? $name['name'] : $config['name'];
+                    $cache['icon'] = $name['icon'] ? $name['icon'] : 'fa fa-square';
+                    $this->dcache->set('module-'.$siteid.'-'.$dirname, $cache);
+                }
+            }
 
-		} else {
-			return NULL;
-		}
+        } else {
+            return NULL;
+        }
 
 
-		$this->dconfig->file(WEBPATH.'config/domain.php')->note('站点域名文件')->space(32)->to_require_one($site_domain);
-	}
+        $this->dconfig->file(WEBPATH.'config/domain.php')->note('站点域名文件')->space(32)->to_require_one($site_domain);
+    }
 
-	public function cache($temp = '') {
+    public function cache($temp = '') {
 
-	    if ($temp) {
-	        return;
+        if ($temp) {
+            return;
         }
 
         $this->mform_cache = array();

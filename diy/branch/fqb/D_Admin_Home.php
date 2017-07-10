@@ -87,7 +87,7 @@ class D_Admin_Home extends M_Controller {
                 'fieldtype' => 'Radio',
                 'setting' => array(
                     'option' => array(
-						'value' => 9,
+                        'value' => 9,
                         'options' => fc_lang('正常').'|9'.chr(13).fc_lang('关闭').'|10'
                     ),
                     'validate' => array(
@@ -223,8 +223,8 @@ class D_Admin_Home extends M_Controller {
                         APP_DIR.'/admin/home/index/flag/'.$id);
                     isset($param['flag']) && $param['flag'] && $param['flag'] == $id && $meta_name = fc_lang($t['name']);
                 } else {
-					unset($flag[$id]);
-				}
+                    unset($flag[$id]);
+                }
             }
         }
 
@@ -332,8 +332,8 @@ class D_Admin_Home extends M_Controller {
                 $did && $data[1]['updatetime'] = $data[1]['inputtime'] = SYS_TIME;
                 // 正常发布
                 if (($id = $this->content_model->add($data, $syncatid)) != FALSE) {
-					// 执行提交后的脚本
-					$this->validate_table($id, $myfield, $data);
+                    // 执行提交后的脚本
+                    $this->validate_table($id, $myfield, $data);
                     // 发布草稿时删除草稿数据
                     $did && $this->content_model->delete_draft($did, 'cid=0 and eid=0')
                         ? $this->attachment_replace_draft($did, $id, 0, $this->content_model->prefix)
@@ -341,10 +341,14 @@ class D_Admin_Home extends M_Controller {
                     $mark = $this->content_model->prefix.'-'.$id;
                     $member = $this->member_model->get_base_member($uid);
                     $rule = $cat['permission'][$member['markrule']];
-                    // 积分处理
-                    $rule['experience'] + $member['experience'] >= 0 && $this->member_model->update_score(0, $uid, $rule['experience'], $mark, "发布文档", 1);
-                    // 虚拟币处理
-                    $rule['score'] + $member['score'] >= 0 && $this->member_model->update_score(1, $uid, $rule['score'], $mark, "发布文档", 1);
+                    if ($rule) {
+                        // 积分处理
+                        $rule['experience'] + $member['experience'] >= 0 && $this->member_model->update_score(0, $uid, $rule['experience'], $mark, "发布文档", 1);
+                        // 虚拟币处理
+                        $rule['score'] + $member['score'] >= 0 && $this->member_model->update_score(1, $uid, $rule['score'], $mark, "发布文档", 1);
+                    }
+
+
                     // 操作成功处理附件
 
                     $this->attachment_handle($data[1]['uid'], $mark, $myfield);
@@ -491,8 +495,8 @@ class D_Admin_Home extends M_Controller {
                 }
                 // 正常保存
                 $this->content_model->edit($data, $post, $lid);
-				// 执行提交后的脚本
-				$this->validate_table($id, $myfield, $post);
+                // 执行提交后的脚本
+                $this->validate_table($id, $myfield, $post);
                 // 发布草稿时删除草稿数据
                 $did && $this->content_model->delete_draft($did, 'cid='.$lid.' and eid=0') && $this->attachment_replace_draft($did, $lid, 0, $this->content_model->prefix);
                 // 操作成功处理附件
@@ -515,19 +519,19 @@ class D_Admin_Home extends M_Controller {
                     }
                 }
                 $this->system_log('修改 站点【#'.SITE_ID.'】模块【'.APP_DIR.'】内容【#'.$lid.'】'); // 记录日志
-				if ($cat['setting']['html']
+                if ($cat['setting']['html']
                     && $data['link_id'] != 0 && $post[1]['status'] == 10) {
                     // 删除生成的静态文件
-					$html = $this->db->where('rid', $id)->where('type', 1)->get($this->content_model->prefix.'_html')->row_array();
-					if ($html) {
-						$files = dr_string2array($html['filepath']);
-						if ($files) {
-							foreach ($files as $file) {
-								@unlink($file);
-							}
-						}
-					}
-				}
+                    $html = $this->db->where('rid', $id)->where('type', 1)->get($this->content_model->prefix.'_html')->row_array();
+                    if ($html) {
+                        $files = dr_string2array($html['filepath']);
+                        if ($files) {
+                            foreach ($files as $file) {
+                                @unlink($file);
+                            }
+                        }
+                    }
+                }
                 //exit;
                 $this->admin_msg(
                     fc_lang('操作成功，正在刷新...') .
@@ -537,7 +541,7 @@ class D_Admin_Home extends M_Controller {
                     1
                 );
             }
-			$data = $this->input->post('data', TRUE);
+            $data = $this->input->post('data', TRUE);
             $myflag = $this->input->post('flag');
         } else {
             if ($did) {
@@ -578,10 +582,10 @@ class D_Admin_Home extends M_Controller {
         ));
         $this->template->display('content_add.html');
     }
-	
-	/*===========草稿部分===========*/
 
-	/**
+    /*===========草稿部分===========*/
+
+    /**
      * 草稿箱管理
      */
     public function draft() {
@@ -607,15 +611,15 @@ class D_Admin_Home extends M_Controller {
         $page = max(1, (int) $this->input->get('page'));
         $total = $_GET['total'] ? intval($_GET['total']) : $this->db->where('uid', $this->uid)->count_all_results($table);
         $result = $total ? $this->db
-                                ->where('uid', $this->uid)
-                                ->limit(SITE_ADMIN_PAGESIZE, SITE_ADMIN_PAGESIZE * ($page - 1))
-                                ->order_by('inputtime DESC, id DESC')
-                                ->get($table)
-                                ->result_array() : array();
+            ->where('uid', $this->uid)
+            ->limit(SITE_ADMIN_PAGESIZE, SITE_ADMIN_PAGESIZE * ($page - 1))
+            ->order_by('inputtime DESC, id DESC')
+            ->get($table)
+            ->result_array() : array();
 
         // 存储当前页URL
         $this->_set_back_url(APP_DIR.'/home/index', '', APP_DIR.'/home/draft');
-        
+
         $this->template->assign(array(
             'menu' => $this->get_menu_v3(array(
                 fc_lang('草稿箱') =>  array(APP_DIR.'/admin/home/draft', 'edit'),
@@ -627,10 +631,10 @@ class D_Admin_Home extends M_Controller {
         ));
         $this->template->display('content_draft.html');
     }
-	
-	/*===========审核部分===========*/
-	
-	/**
+
+    /*===========审核部分===========*/
+
+    /**
      * 审核
      */
     public function verify() {
@@ -656,11 +660,11 @@ class D_Admin_Home extends M_Controller {
                     foreach ($ids as $id) {
                         // 主表状态
                         $data = $this->db
-                                     ->where($where ? $where.' AND `id`='.(int)$id : '`id`='.(int)$id)
-                                     ->select('uid,catid')
-                                     ->limit(1)
-                                     ->get($this->content_model->prefix.'_index')
-                                     ->row_array();
+                            ->where($where ? $where.' AND `id`='.(int)$id : '`id`='.(int)$id)
+                            ->select('uid,catid')
+                            ->limit(1)
+                            ->get($this->content_model->prefix.'_index')
+                            ->row_array();
                         if ($data) {
                             // 删除数据
                             $this->content_model->del_verify($id);
@@ -745,12 +749,12 @@ class D_Admin_Home extends M_Controller {
         $param['total'] = $total = $this->input->get('total') ? $this->input->get('total') : $this->db->where($where)->count_all_results($this->content_model->prefix.'_verify');
         $page = max(1, (int) $this->input->get('page'));
         $data = $this->db
-                     ->select('id,catid,author,content,inputtime,status')
-                     ->where($where)
-                     ->limit(SITE_ADMIN_PAGESIZE, SITE_ADMIN_PAGESIZE * ($page - 1))
-                     ->order_by('inputtime DESC, id DESC')
-                     ->get($this->content_model->prefix . '_verify')
-                     ->result_array();
+            ->select('id,catid,author,content,inputtime,status')
+            ->where($where)
+            ->limit(SITE_ADMIN_PAGESIZE, SITE_ADMIN_PAGESIZE * ($page - 1))
+            ->order_by('inputtime DESC, id DESC')
+            ->get($this->content_model->prefix . '_verify')
+            ->result_array();
 
         $this->template->assign(array(
             'list' => $data,
@@ -789,8 +793,8 @@ class D_Admin_Home extends M_Controller {
             $catid = $cid;
             $category = $cid != $catid ? $this->get_cache('module-'.SITE_ID.'-'.APP_DIR, 'category', $catid) : $category[$catid];
             unset($cid);
-			$myfield = $this->_get_field($catid);
-			unset($myfield['status']);
+            $myfield = $this->_get_field($catid);
+            unset($myfield['status']);
             // 设置uid便于校验处理
             $uid = $this->input->post('data[author]') ? get_member_id($this->input->post('data[author]')) : 0;
             $_POST['data']['id'] = $id;
@@ -938,8 +942,8 @@ class D_Admin_Home extends M_Controller {
             if ($status == 9) {
                 // 审核通过的挂钩点
                 $this->hooks->call_hook('content_verify', $data);
-				// 执行提交后的脚本
-				$this->validate_table($id, $myfield, $data);
+                // 执行提交后的脚本
+                $this->validate_table($id, $myfield, $data);
                 // 操作成功处理附件
                 $this->attachment_handle($data[1]['uid'], $this->content_model->prefix.'-'.$id, $myfield, $data);
                 $this->attachment_replace($data[1]['uid'], $id, $this->content_model->prefix);
@@ -978,8 +982,8 @@ class D_Admin_Home extends M_Controller {
             );
         }
     }
-	
-	/*===========相关功能===========*/
+
+    /*===========相关功能===========*/
 
     /**
      * 生成静态
@@ -1030,31 +1034,31 @@ class D_Admin_Home extends M_Controller {
                 !$flag && exit(dr_json(0, fc_lang('您还没有选择呢')));
                 exit(dr_json(1, fc_lang('操作成功，正在刷新...')));
             } elseif ($this->input->get('tab') == 0) {
-				// 推送栏目
-				$value = @explode(',', $this->input->get('value'));
+                // 推送栏目
+                $value = @explode(',', $this->input->get('value'));
                 !$value && exit(dr_json(0, fc_lang('您还没有选择呢')));
-				 // 执行同步指定栏目
-				foreach ($ids as $id) {
-					$this->db->where('id', (int)$id)->update($this->content_model->prefix, array('link_id' => -1)); // 更改状态
-					$data = $this->db->where('id', (int)$id)->get($this->content_model->prefix)->row_array(); // 获取数据
-					if (!$data) {
-						continue;
-					}
-					foreach ($value as $catid) {
-						if ($catid && $catid != $data['catid']) {
-							// 插入到同步栏目中
-							$new[1] = $data;
-							$new[1]['catid'] = $catid;
-							$new[1]['link_id'] = $id;
-							$new[1]['tableid'] = 0;
-							$new[1]['id'] = $this->content_model->index($new);
-							$this->db->replace($this->content_model->prefix, $new[1]); // 创建主表
-							$this->system_log('站点【#'.SITE_ID.'】模块【'.APP_DIR.'】内容【#'.@implode(',', $ids).'】同步到栏目#'.$catid); // 记录日志
-						}
-					}
-				}
+                // 执行同步指定栏目
+                foreach ($ids as $id) {
+                    $this->db->where('id', (int)$id)->update($this->content_model->prefix, array('link_id' => -1)); // 更改状态
+                    $data = $this->db->where('id', (int)$id)->get($this->content_model->prefix)->row_array(); // 获取数据
+                    if (!$data) {
+                        continue;
+                    }
+                    foreach ($value as $catid) {
+                        if ($catid && $catid != $data['catid']) {
+                            // 插入到同步栏目中
+                            $new[1] = $data;
+                            $new[1]['catid'] = $catid;
+                            $new[1]['link_id'] = $id;
+                            $new[1]['tableid'] = 0;
+                            $new[1]['id'] = $this->content_model->index($new);
+                            $this->db->replace($this->content_model->prefix, $new[1]); // 创建主表
+                            $this->system_log('站点【#'.SITE_ID.'】模块【'.APP_DIR.'】内容【#'.@implode(',', $ids).'】同步到栏目#'.$catid); // 记录日志
+                        }
+                    }
+                }
                 exit(dr_json(1, fc_lang('操作成功，正在刷新...')));
-			}	
+            }
         } else {
             $this->template->assign(array(
                 'flag' => $this->get_cache('module-'.SITE_ID.'-'.APP_DIR, 'setting', 'flag'),
@@ -1063,50 +1067,50 @@ class D_Admin_Home extends M_Controller {
             $this->template->display('content_ts.html');exit;
         }
     }
-	
-	// 文档状态设定
-	public function status() {
-		
-		$id = (int)$this->input->get('id');
+
+    // 文档状态设定
+    public function status() {
+
+        $id = (int)$this->input->get('id');
         $data = $this->content_model->get($id);
         !$data && exit(dr_json(0, fc_lang('对不起，数据被删除或者查询不存在')));
-		
-		// 删除缓存
+
+        // 删除缓存
         $this->clear_cache('show'.APP_DIR.SITE_ID.$id);
         $this->clear_cache('mshow'.APP_DIR.SITE_ID.$id);
-		
-		if ($data['status'] == 10) {
-			$this->db->where('id', $id)->update($this->content_model->prefix, array('status' => 9));
-			$this->db->where('id', $id)->update($this->content_model->prefix.'_index', array('status' => 9));
+
+        if ($data['status'] == 10) {
+            $this->db->where('id', $id)->update($this->content_model->prefix, array('status' => 9));
+            $this->db->where('id', $id)->update($this->content_model->prefix.'_index', array('status' => 9));
             // 调用方法状态更改方法
             $data['status'] = 9;
             $this->content_model->_update_status($data);
             $this->system_log('修改 站点【#'.SITE_ID.'】模块【'.APP_DIR.'】内容【#'.$id.'】状态为【正常】'); // 记录日志
-			exit(dr_json(1, fc_lang('操作成功，正在刷新...'), $data['catid']));
-		} else {
-			// 删除生成的文件
-			if ($this->get_cache('module-'.SITE_ID.'-'.APP_DIR, 'category', $data['catid'], 'setting', 'html')
+            exit(dr_json(1, fc_lang('操作成功，正在刷新...'), $data['catid']));
+        } else {
+            // 删除生成的文件
+            if ($this->get_cache('module-'.SITE_ID.'-'.APP_DIR, 'category', $data['catid'], 'setting', 'html')
                 && strpos($data['url'], 'index.php') === FALSE) {
-				$html = $this->db->where('rid', $id)->where('type', 1)->get($this->content_model->prefix.'_html')->row_array();
-				if ($html) {
-					$files = dr_string2array($html['filepath']);
-					if ($files) {
-						foreach ($files as $file) {
-							@unlink($file);
-						}
-					}
-				}
-			}
-			$this->db->where('id', $id)->update($this->content_model->prefix, array('status' => 10));
-			$this->db->where('id', $id)->update($this->content_model->prefix.'_index', array('status' => 10));
+                $html = $this->db->where('rid', $id)->where('type', 1)->get($this->content_model->prefix.'_html')->row_array();
+                if ($html) {
+                    $files = dr_string2array($html['filepath']);
+                    if ($files) {
+                        foreach ($files as $file) {
+                            @unlink($file);
+                        }
+                    }
+                }
+            }
+            $this->db->where('id', $id)->update($this->content_model->prefix, array('status' => 10));
+            $this->db->where('id', $id)->update($this->content_model->prefix.'_index', array('status' => 10));
             // 调用方法状态更改方法
             $data['status'] = 10;
             $this->content_model->_update_status($data);
             $this->system_log('修改 站点【#'.SITE_ID.'】模块【'.APP_DIR.'】内容【#'.$id.'】状态为【关闭】'); // 记录日志
-			exit(dr_json(1, fc_lang('操作成功，正在刷新...'), 0));
-		}
-		
-	}
+            exit(dr_json(1, fc_lang('操作成功，正在刷新...'), 0));
+        }
+
+    }
 
     // 跳转
     public function content() {
