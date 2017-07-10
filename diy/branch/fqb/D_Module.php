@@ -54,7 +54,7 @@ class D_Module extends D_Common {
 
         $cache = md5(dr_array2string($data).dr_array2string($id).$str.$default.$onlysub.$is_push.$is_first.$this->member['uid']);
         if ($cache_data = $this->get_cache_data($cache)) {
-            return $cache_data;
+            //return $cache_data;
         }
 
         $tree = array();
@@ -74,6 +74,7 @@ class D_Module extends D_Common {
                 if (isset($t['tid']) && $t['tid'] == 0 && !$t['child']) {
                     continue;
                 }
+                $t['html_disabled'] = 0;
                 // 验证权限
                 if ($t['pcatpost']) {
                     // 父栏目可发布时的权限
