@@ -72,27 +72,13 @@ class D_Admin_Content extends M_Controller {
             $keyword && $this->db->where('keywords=""');
             $data = $this->db->limit($psize, $psize * ($page - 1))->order_by('id DESC')->get($table)->result_array();
             foreach ($data as $t) {
-				$kw = $t['title'].' '.$t['description'];
-				$info = @file_get_contents('http://keyword.discuz.com/related_kw.html?ics=utf-8&ocs=utf-8&title='.rawurlencode($kw).'&content='.rawurlencode($kw));
-				if ($info) {
-					$kws = array();
-					$xml = xml_parser_create();
-					xml_parser_set_option($xml, XML_OPTION_CASE_FOLDING, 0);
-					xml_parser_set_option($xml, XML_OPTION_SKIP_WHITE, 1);
-					xml_parse_into_struct($xml, $info, $values, $index);
-					xml_parser_free($xml);
-					foreach ($values as $v) {
-						$kw = trim($v['value']);
-                        (strlen($kw) > 5 && ($v['tag'] == 'kw' || $v['tag'] == 'ekw')) && $kws[] = $kw;
-					}
-					$update = @implode(',', $kws);
-					if ($update) {
-						$this->db->where('id='.$t['id'])->update($table, array(
-							'keywords' => $update
-						));
-						$this->content_model->update_tag($update); // 更新tag表
-					}
-				}
+                $kw = $t['title'].' '.$t['description'];
+                $update = $this->_get_keyword($kw);
+                if ($update) {
+                    $this->db->where('id='.$t['id'])->update($table, array(
+                        'keywords' => $update
+                    ));
+                }
             }
             $this->mini_msg(fc_lang('正在执行中(%s) ... ', "$tpage/$page"), dr_url(APP_DIR.'/content/keyword', array('todo' => 1, 'page' => $page + 1)), 2, 0);
         } else {
@@ -334,8 +320,8 @@ class D_Admin_Content extends M_Controller {
                 array('name' => '栏目附表', 'table' => $this->content_model->prefix.'_category_data_{id}'),
             );
             if ($this->get_cache('module-'.SITE_ID.'-'.APP_DIR, 'extend')) {
-               $bm[] = array('name' => '扩展主表', 'table' => $this->content_model->prefix.'_extend');
-               $bm[] = array('name' => '扩展附表', 'table' => $this->content_model->prefix.'_extend_data_{id}');
+                $bm[] = array('name' => '扩展主表', 'table' => $this->content_model->prefix.'_extend');
+                $bm[] = array('name' => '扩展附表', 'table' => $this->content_model->prefix.'_extend_data_{id}');
             }
             $form = $this->get_cache('module-'.SITE_ID.'-'.APP_DIR, 'form');
             if ($form) {
@@ -351,6 +337,38 @@ class D_Admin_Content extends M_Controller {
             $this->template->display('content_replace.html');
         }
 
+    }
+
+    private function _get_keyword($kw){
+
+        $rt = '';
+        //tag数据
+        $tags = $this->dcache->get('tags-'.SITE_ID);
+        if ($tags) {
+            foreach ($tags as $t) {
+                // 找到了
+                if (strpos($kw, $t['name']) !== false) {
+                    $rt.= ','.$t['tags'];
+                }
+            }
+        }
+
+        if ($rt) {
+            return trim($rt, ',');
+        }
+
+        $return = array();
+        //tag数据
+        $tags = $this->dcache->get('tag-'.SITE_ID);
+        if ($tags) {
+            foreach ($tags as $t) {
+                strpos($kw, $t) !== false && $return[] = $t;
+            }
+        }
+
+        $rt = @implode(',', $return);
+
+        return $rt ? $rt : '';
     }
 
 }
