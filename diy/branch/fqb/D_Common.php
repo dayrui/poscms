@@ -760,14 +760,14 @@ class D_Common extends CI_Controller {
                 && !defined('DR_PAY_ID')
                 && !defined('DISCUZ_ROOT')
                 && !in_array($this->router->class, array('register', 'login', 'api', 'sns'))) {
-                $uri = $this->router->class.'-'.$this->router->method;
+                $uri = strtolower($this->router->class.'-'.$this->router->method);
                 $url = dr_member_url('login/index', array('backurl' => urlencode(dr_now_url())));
                 // 游客发布权限不验证
                 $verify = APP_DIR != 'member' && in_array($uri, array('home-add', 'home-field')) && !$this->member ? FALSE : TRUE;
                 // 没有登录时
                 $verify && !$this->member && $this->member_msg(fc_lang('会话超时，请重新登录').$this->member_model->logout(), $url);
                 // 待审核会员组
-                $verify && $this->member['groupid'] == 1 && $uri != 'home-index' && $this->member_msg(fc_lang('对不起，您还没有通过审核，无法进行此操作'));
+                $verify && $this->member['groupid'] == 1 && $uri != 'home-index' && $this->member_msg(fc_lang('对不起，您还没有通过审核，无法进行此操作'), MEMBER_URL);
                 // 已经登录时
                 if ($this->uid) {
                     $this->hooks->call_hook('init_member'); // 会员中心初始化的钩子
