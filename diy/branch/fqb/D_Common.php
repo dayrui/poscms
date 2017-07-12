@@ -47,11 +47,10 @@ class D_Common extends CI_Controller {
         $this->lang->load('my');
         $this->hooks->call_hook('finecms-init'); // finecms 初始化完毕的钩子
         $this->template->ci = $this;
-        /*
         if ($r = get_cookie('my_position')) {
             list($this->my_position['lng'], $this->my_position['lat']) = explode(',', $r);
         }
-        $this->my_city = get_cookie('my_city');*/
+        $this->my_city = get_cookie('my_city');
         $this->template->assign(array(
             'get' => $this->input->get(NULL, TRUE),
             'member' => $this->member,
@@ -354,12 +353,7 @@ class D_Common extends CI_Controller {
         unset($sitecfg);
 
         // 分析站点信息
-        $siteid = (IS_ADMIN || $this->router->method == 'html') && $this->session->userdata('siteid') ? (int)$this->session->userdata('siteid') : 0;
-        if ($siteid && isset($this->site_info[$siteid])) {
-            // && isset($domain[DOMAIN_NAME])
-            // 通过session来获取siteid
-            define('SITE_ID', $siteid);
-        } elseif (isset($domain[DOMAIN_NAME]) && isset($this->site_info[$domain[DOMAIN_NAME]])) {
+        if (isset($domain[DOMAIN_NAME]) && isset($this->site_info[$domain[DOMAIN_NAME]])) {
             // 通过域名来获取siteid
             $siteid = (int)$domain[DOMAIN_NAME];
             $orthers = @explode(',', $this->site_info[$siteid]['SITE_DOMAINS']);
@@ -410,7 +404,7 @@ class D_Common extends CI_Controller {
                     // 非后台域名时,禁止访问
                     exit('系统禁止访问');
                 }
-                define('ADMIN_URL', dr_http_prefix($config3['SYS_DOMAIN'].'/'));
+                define('ADMIN_URL', dr_http_prefix(DOMAIN_NAME.'/'));
             } else {
                 define('ADMIN_URL', dr_http_prefix(DOMAIN_NAME.'/'));
             }
@@ -765,15 +759,17 @@ class D_Common extends CI_Controller {
                 // 游客发布权限不验证
                 $verify = APP_DIR != 'member' && in_array($uri, array('home-add', 'home-field')) && !$this->member ? FALSE : TRUE;
                 // 没有登录时
-                $verify && !$this->member && $this->member_msg(fc_lang('会话超时，请重新登录').$this->member_model->logout(), $url);
+                $verify && !$this->member
+                && $this->member_msg(fc_lang('会话超时，请重新登录').$this->member_model->logout(), $url);
                 // 待审核会员组
-                $verify && $this->member['groupid'] == 1 && $uri != 'home-index' && $this->member_msg(fc_lang('对不起，您还没有通过审核，无法进行此操作'), MEMBER_URL);
+                $verify && $this->member['groupid'] == 1 && $uri != 'home-index'
+                && $this->member_msg(fc_lang('对不起，您还没有通过审核，无法进行此操作'), MEMBER_URL);
                 // 已经登录时
                 if ($this->uid) {
                     $this->hooks->call_hook('init_member'); // 会员中心初始化的钩子
                     $this->member_model->init_member();
                     // 会员验证(首页,短消息窗口,百度编辑器,支付页不验证)
-                    if ((APP_DIR || ($uri != 'home-index' && $uri != 'pm-webchat'))) {
+                    if ((APP_DIR != 'member' || ($uri != 'home-index' && $uri != 'pm-webchat'))) {
                         if ($MEMBER['setting']['complete']
                             && !isset($this->member['complete'])
                             && $this->router->class != 'account') {
@@ -3076,6 +3072,59 @@ class D_Common extends CI_Controller {
         $data[0][] = 'member/menu::cache';
 
         return $data;
+    }
+
+    // 提取关键字
+    function _get_keyword($kw){
+
+        if (!$kw) {
+            return '';
+        }
+
+        $rt = '';
+        //tag数据
+        $tags = $this->dcache->get('tags-'.SITE_ID);
+        if ($tags) {
+            foreach ($tags as $t) {
+                // 找到了
+                if (strpos($kw, $t['name']) !== false) {
+                    $rt.= ','.$t['tags'];
+                }
+            }
+        }
+
+        if ($rt) {
+            return trim($rt, ',');
+        }
+
+        $return = array();
+        //tag数据
+        $tags = $this->dcache->get('tag-'.SITE_ID);
+        if ($tags) {
+            foreach ($tags as $t) {
+                strpos($kw, $t) !== false && $return[] = $t;
+            }
+        }
+
+        $rt = @implode(',', $return);
+
+        if (!$rt) {
+            $info = @file_get_contents('http://zhannei.baidu.com/api/customsearch/keywords?title='.rawurlencode($kw));
+            $info=rawurldecode($info);
+            if ($info) {
+                $kws = array();
+                $comtxts = json_decode($info, true);
+                $keyword_list = $comtxts['result']['res']['keyword_list'];
+                foreach ($keyword_list as $v) {
+                    $kw = trim($v);
+                    (strlen($kw) > 5) && $kws[] = $kw;
+                }
+                $rt = @implode(',', $kws);
+            }
+        }
+
+
+        return $rt ? $rt : '';
     }
 
 }
