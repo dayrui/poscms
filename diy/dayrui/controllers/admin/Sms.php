@@ -29,7 +29,7 @@ class Sms extends M_Controller {
 		
 		if (IS_POST) {
 		
-			$data = $this->input->post('data');
+			$data = $this->input->post('data', true);
 			if (strlen($data['note']) > 30 ) {
                 $this->admin_msg(fc_lang('短信签名超出了范围'));
             }

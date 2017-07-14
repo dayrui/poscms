@@ -2588,7 +2588,7 @@ class D_Common extends CI_Controller {
             'ip' => $this->input->ip_address(),
             'uid' => $this->member['uid'],
             'time' => SYS_TIME,
-            'action' => $action,
+            'action' => addslashes($action),
             'username' => $this->member['username'],
         );
 

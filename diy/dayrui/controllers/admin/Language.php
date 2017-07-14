@@ -30,7 +30,7 @@ class Language extends M_Controller {
 
         if (IS_POST) {
 
-            $data = $this->input->post('data');
+            $data = $this->input->post('data', true);
 
             if ($_POST['aa'] == 0) {
                 @unlink($file);
