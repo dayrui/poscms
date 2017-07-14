@@ -106,7 +106,7 @@
                                 <div class="search-container ">
                                     {if $searchid}
                                     <ul class="search-container">
-                                        {list action=search module=$dirname id=$searchid total=$sototal catid=$catid page=1 pagesize=10 urlrule=$urlrule}
+                                        {list action=search module=$dirname id=$searchid total=$sototal catid=$catid order=$params.order page=1 pagesize=10 urlrule=$urlrule}
                                         <li class="search-item clearfix">
                                             <div class="search-content text-left">
                                                 <h4 class="search-title">
