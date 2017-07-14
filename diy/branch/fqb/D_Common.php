@@ -898,6 +898,15 @@ class D_Common extends CI_Controller {
         // uri不在权限所有列表中就不验证,表示通过
         if (!isset($this->_auth[$uri]) && !isset($this->_auth[$route]) && !isset($this->_link[$uri])) {
             return TRUE;
+        } elseif (strpos($uri, '/admin/content/index') !== false) {
+            // 判断特殊的内容维护和评论
+            return $this->is_auth('admin/frame_content/index');
+        } elseif (strpos($uri, '/admin/comment/config') !== false) {
+            // 判断特殊的评论
+            return $this->is_auth('admin/frame_comment/index');
+        }elseif (strpos($uri, '/admin/ecomment/config') !== false) {
+            // 判断特殊的评论
+            return $this->is_auth('admin/frame_comment/index');
         }
 
         return FALSE;
