@@ -55,10 +55,10 @@ class Member_model extends CI_Model {
         $type ? $this->db->where('username', $key) : $this->db->where('uid', (int)$key);
 
         $data = $this->db
-                     ->limit(1)
-                     ->select('uid,username,email,levelid,groupid,score,experience')
-                     ->get('member')
-                     ->row_array();
+            ->limit(1)
+            ->select('uid,username,email,levelid,groupid,score,experience')
+            ->get('member')
+            ->row_array();
         if (!$data) {
             return NULL;
         }
@@ -125,11 +125,11 @@ class Member_model extends CI_Model {
 
         // 查询会员信息
         $db = $this->db
-                     ->from($this->db->dbprefix('member').' AS m2')
-                     ->join($this->db->dbprefix('member_data').' AS a', 'a.uid=m2.uid', 'left')
-                     ->where('m2.uid', $uid)
-                     ->limit(1)
-                     ->get();
+            ->from($this->db->dbprefix('member').' AS m2')
+            ->join($this->db->dbprefix('member_data').' AS a', 'a.uid=m2.uid', 'left')
+            ->where('m2.uid', $uid)
+            ->limit(1)
+            ->get();
         if (!$db) {
             return NULL;
         }
@@ -330,11 +330,11 @@ class Member_model extends CI_Model {
         $password = trim($password);
         // 查询用户信息
         $data = $this->db
-                     ->select('`password`, `salt`, `adminid`,`uid`')
-                     ->where('username', $username)
-                     ->limit(1)
-                     ->get('member')
-                     ->row_array();
+            ->select('`password`, `salt`, `adminid`,`uid`')
+            ->where('username', $username)
+            ->limit(1)
+            ->get('member')
+            ->row_array();
         // 判断用户状态
         if (!$data) {
             return -1;
@@ -372,13 +372,13 @@ class Member_model extends CI_Model {
 
         // 查询用户信息
         $data = $this->db
-                     ->select('m.uid,m.email,m.username,m.adminid,m.groupid,a.realname,a.usermenu,a.color')
-                     ->from($this->db->dbprefix('member').' AS m')
-                     ->join($this->db->dbprefix('admin').' AS a', 'a.uid=m.uid', 'left')
-                     ->where('m.uid', $uid)
-                     ->limit(1)
-                     ->get()
-                     ->row_array();
+            ->select('m.uid,m.email,m.username,m.adminid,m.groupid,a.realname,a.usermenu,a.color')
+            ->from($this->db->dbprefix('member').' AS m')
+            ->join($this->db->dbprefix('admin').' AS a', 'a.uid=m.uid', 'left')
+            ->where('m.uid', $uid)
+            ->limit(1)
+            ->get()
+            ->row_array();
         if (!$data) {
             return 0;
         } elseif ($verify) {
@@ -426,8 +426,8 @@ class Member_model extends CI_Model {
     public function get_admin_all($roleid = 0, $keyword = NULL) {
 
         $select = $this->db
-                       ->from($this->db->dbprefix('admin').' AS a')
-                       ->join($this->db->dbprefix('member').' AS b', 'a.uid=b.uid', 'left');
+            ->from($this->db->dbprefix('admin').' AS a')
+            ->join($this->db->dbprefix('member').' AS b', 'a.uid=b.uid', 'left');
         $select->join($this->db->dbprefix('admin_role').' AS c', 'b.adminid=c.id', 'left');
 
         $roleid && $select->where('b.adminid', $roleid);
@@ -490,12 +490,12 @@ class Member_model extends CI_Model {
 
         // 判断OAuth是否已经注册到oauth表
         $oauth = $this->db
-                      ->select('id,uid')
-                      ->where('oid', $data['oid'])
-                      ->where('oauth', $appid)
-                      ->limit(1)
-                      ->get('member_oauth')
-                      ->row_array();
+            ->select('id,uid')
+            ->where('oid', $data['oid'])
+            ->where('oauth', $appid)
+            ->limit(1)
+            ->get('member_oauth')
+            ->row_array();
         if ($oauth) {
             // 已经注册就直接保存登录会话，更新表中的记录
             $uid = $oauth['uid'];
@@ -504,22 +504,22 @@ class Member_model extends CI_Model {
             $this->hooks->call_hook('member_oauth_login', array('uid' => $uid, 'oauth' => $appid));
         } else {
             // 没有注册时，就直接注册会员账号
-			 if ($this->ci->get_cache('member', 'setting', 'regoauth')) {
+            if ($this->ci->get_cache('member', 'setting', 'regoauth')) {
                 // 直接注册
-            	 $uid = $data['uid'] = $this->_register($data, $appid);
+                $uid = $data['uid'] = $this->_register($data, $appid);
             } else {
                 // 绑定账号
-				  return 'bang';
+                return 'bang';
             }
         }
 
         // 查询会员表
         $member = $this->db
-                       ->where('uid', $uid)
-                       ->select('uid,username,salt')
-                       ->limit(1)
-                       ->get('member')
-                       ->row_array();
+            ->where('uid', $uid)
+            ->select('uid,username,salt')
+            ->limit(1)
+            ->get('member')
+            ->row_array();
         $MEMBER = $this->ci->get_cache('member');
         $synlogin = '';
 
@@ -554,12 +554,12 @@ class Member_model extends CI_Model {
 
         // 判断OAuth是否已经注册到oauth表
         $oauth = $this->db
-                      ->select('id,uid')
-                      ->where('oid', $data['oid'])
-                      ->where('oauth', $appid)
-                      ->limit(1)
-                      ->get('member_oauth')
-                      ->row_array();
+            ->select('id,uid')
+            ->where('oid', $data['oid'])
+            ->where('oauth', $appid)
+            ->limit(1)
+            ->get('member_oauth')
+            ->row_array();
         // 已经存在就直接更新表中的记录
         if ($oauth) {
             // 其他账户绑定了时返回其他账户uid
@@ -722,7 +722,7 @@ class Member_model extends CI_Model {
             }
         }
 
-		$this->ci->uid = $data['uid'];
+        $this->ci->uid = $data['uid'];
         $this->_login_log($data['uid']);
 
         // 返字段值，默认返回email
@@ -777,12 +777,12 @@ class Member_model extends CI_Model {
 
         // 同一天Ip一致时只更新一次更新时间
         if ($row = $this->db
-                        ->select('id')
-                        ->where('uid', $uid)
-                        ->where('loginip', $ip)
-                        ->where('DATEDIFF(from_unixtime(logintime),now())=0')
-                        ->get($table)
-                        ->row_array()) {
+            ->select('id')
+            ->where('uid', $uid)
+            ->where('loginip', $ip)
+            ->where('DATEDIFF(from_unixtime(logintime),now())=0')
+            ->get($table)
+            ->row_array()) {
             $this->db->where('id', $row['id'])->update($table, $data);
         } else {
             $this->db->insert($table, $data);
@@ -1368,12 +1368,12 @@ class Member_model extends CI_Model {
 
         // 会员自定义字段
         $field = $this->db
-                      ->where('disabled', 0)
-                      ->where('relatedid', 0)
-                      ->where('relatedname', 'member')
-                      ->order_by('displayorder ASC,id ASC')
-                      ->get('field')
-                      ->result_array();
+            ->where('disabled', 0)
+            ->where('relatedid', 0)
+            ->where('relatedname', 'member')
+            ->order_by('displayorder ASC,id ASC')
+            ->get('field')
+            ->result_array();
         if ($field) {
             foreach ($field as $t) {
                 $t['setting'] = dr_string2array($t['setting']);
@@ -1383,12 +1383,12 @@ class Member_model extends CI_Model {
 
         // 会员空间自定义字段
         $field = $this->db
-                      ->where('disabled', 0)
-                      ->where('relatedid', 0)
-                      ->where('relatedname', 'spacetable')
-                      ->order_by('displayorder ASC,id ASC')
-                      ->get('field')
-                      ->result_array();
+            ->where('disabled', 0)
+            ->where('relatedid', 0)
+            ->where('relatedname', 'spacetable')
+            ->order_by('displayorder ASC,id ASC')
+            ->get('field')
+            ->result_array();
         if ($field) {
             foreach ($field as $t) {
                 $t['setting'] = dr_string2array($t['setting']);
@@ -1448,7 +1448,7 @@ class Member_model extends CI_Model {
 
         // 更新Ucenter配置
         if ($cache['setting']['ucenter']) {
-            $s = '<?php ' . PHP_EOL . '/* UCenter配置 */' . PHP_EOL
+            $s = '<?php if (!defined(\'BASEPATH\')) exit(\'No direct script access allowed\');' . PHP_EOL . '/* UCenter配置 */' . PHP_EOL
                 . stripslashes($cache['setting']['ucentercfg'])
                 . PHP_EOL . '/* FineCMS配置 */' . PHP_EOL
                 . '$dbhost    = \'' . $this->db->hostname . '\';' . PHP_EOL
@@ -1467,7 +1467,7 @@ class Member_model extends CI_Model {
 
         // 更新UCSSO配置
         if ($cache['setting']['ucsso']) {
-            file_put_contents(WEBPATH.'api/ucsso/config.php', stripslashes($cache['setting']['ucssocfg']));
+            file_put_contents(WEBPATH.'api/ucsso/config.php', str_replace(array('<?php', '<?'),'<?php if (!defined(\'BASEPATH\')) exit(\'No direct script access allowed\');'.PHP_EOL, stripslashes($cache['setting']['ucssocfg'])));
         }
 
         $this->ci->clear_cache('member');
@@ -1617,11 +1617,11 @@ class Member_model extends CI_Model {
         // 每日登录积分处理
         if (!get_cookie('login_experience_'.$this->uid)
             && !$this->db
-                     ->where('uid', $this->uid)
-                     ->where('type', 0)
-                     ->where('mark', 'login')
-                     ->where('DATEDIFF(from_unixtime(inputtime),now())=0')
-                     ->count_all_results('member_scorelog')) {
+                ->where('uid', $this->uid)
+                ->where('type', 0)
+                ->where('mark', 'login')
+                ->where('DATEDIFF(from_unixtime(inputtime),now())=0')
+                ->count_all_results('member_scorelog')) {
             set_cookie('login_experience_'.$this->uid, TRUE, $time - SYS_TIME);
             $this->update_score(0, $this->uid, (int)$this->member_rule['login_experience'], 'login', fc_lang('每日登陆'));
         }
@@ -1629,11 +1629,11 @@ class Member_model extends CI_Model {
         // 每日登录虚拟币处理
         if (!get_cookie('login_score_'.$this->uid)
             && !$this->db
-                     ->where('uid', (int) $this->uid)
-                     ->where('type', 1)
-                     ->where('mark', 'login')
-                     ->where('DATEDIFF(from_unixtime(inputtime),now())=0')
-                     ->count_all_results('member_scorelog')) {
+                ->where('uid', (int) $this->uid)
+                ->where('type', 1)
+                ->where('mark', 'login')
+                ->where('DATEDIFF(from_unixtime(inputtime),now())=0')
+                ->count_all_results('member_scorelog')) {
             set_cookie('login_score_'.$this->uid, TRUE, $time - SYS_TIME);
             $this->update_score(1, $this->uid, (int) $this->member_rule['login_score'], 'login', fc_lang('每日登陆'));
         }
@@ -1896,7 +1896,7 @@ class Member_model extends CI_Model {
 
         // 来源
         !$source && $source = $this->agent->is_mobile() ? fc_lang('来自移动端') : fc_lang('来自网站');
-        
+
         // 过滤非法内容
         $content = dr_preg_html($content).' ';
 
@@ -1995,10 +1995,10 @@ class Member_model extends CI_Model {
 
         // 给@的人发送提醒
         $user && $this->add_notice($user, 2, fc_lang('【%s】在动态中@提到了我，<a href="%s" target="_blank">查看动态</a>。', $username, dr_sns_feed_url($uid, $id)));
-        
+
         // 给作者发送转发的提醒
         $repost && $this->add_notice($row['uid'], 2, fc_lang('【%s】转发了我的动态，<a href="%s" target="_blank">查看动态</a>。', $username, dr_sns_feed_url($uid, $id)));
-        
+
         // 分数奖励
         if ($uid == $this->uid) {
             $this->member_rule['feed_experience'] && $this->update_score(0, $uid, (int)$this->member_rule['feed_experience'], '', "发布一条动态奖励");

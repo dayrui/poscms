@@ -27,9 +27,9 @@ class System extends M_Controller {
 
 		if (IS_POST) {
             $this->load->library('dconfig');
-		    $domain = $this->input->post('domain');
+		    $domain = $this->input->post('domain', true);
             $this->dconfig->file(WEBPATH.'config/admin_domain.php')->note('后台域名文件')->space(32)->to_require_one($domain);
-			$this->system_model->save_config($data, $this->input->post('data'), $action);
+			$this->system_model->save_config($data, $this->input->post('data', true), $action);
 			$this->system_log('修改系统配置'); // 记录日志
 			$this->admin_msg(fc_lang('操作成功，正在刷新...'), dr_url('system/'.$this->router->method, array('page' => (int)$this->input->post('page'))), 1);
 		}
@@ -76,7 +76,7 @@ class System extends M_Controller {
 		if (IS_POST) {
 
 			$data = require WEBPATH.'config/system.php'; // 加载网站系统配置文件
-			$this->system_model->save_config($data, $this->input->post('data'), 'file');
+			$this->system_model->save_config($data, $this->input->post('data', true), 'file');
             $this->admin_msg(fc_lang('操作成功，正在刷新...'), dr_url('system/'.$this->router->method, array('page' => (int)$this->input->post('page'))), 1);
 
 		}
