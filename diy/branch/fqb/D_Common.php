@@ -3078,7 +3078,7 @@ class D_Common extends CI_Controller {
         }
 
         $data[0][] = 'menu::cache';
-        $data[0][] = 'member/menu::cache';
+        $data[0][] = 'member/member_menu::cache';
 
         return $data;
     }
