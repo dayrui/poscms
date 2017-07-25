@@ -2239,7 +2239,7 @@ $.ajax({
         $cache && $this->ci->set_cache_data($cname, $data, $cache);
 
         $db->db_debug = TRUE;
-        
+
         return $data;
     }
 
@@ -2430,7 +2430,7 @@ $.ajax({
 
         $debug = $sql.'<br>';
 
-            // 错误信息格式化
+        // 错误信息格式化
         $error && $debug.= $error = '<div style="padding:10px;margin:10px;margin-top:20px;border:1px solid #ffbe7a;background:#fffced;color:red;font-weight:bold;">'.$error."</div>";
 
         $total = isset($total) ? $total : count($data);
@@ -2480,7 +2480,7 @@ $.ajax({
             } elseif (preg_match('/[A-Z_]+/', $var)) {
                 $string.= ''.$var.'';
             } else {
-                $string.= '\''.$var.'\'';
+                $string.= '\''.dr_safe_replace($var).'\'';
             }
             $string.= ']';
         }
