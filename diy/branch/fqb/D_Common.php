@@ -1166,8 +1166,7 @@ class D_Common extends CI_Controller {
      */
     protected function is_admin_login() {
 
-        if (IS_ADMIN
-            && ($this->router->class == 'login' || $this->router->method == 'api')) {
+        if (IS_ADMIN && ($this->router->class == 'login' || $this->router->method == 'login')) {
             return FALSE;
         }
 
@@ -2281,6 +2280,8 @@ class D_Common extends CI_Controller {
         $member = $this->db->select('password')->where('uid', $uid)->get('member')->row_array();
         if (!$member) {
             exit('check error');
+        } elseif ($member['salt'] != $salt) {
+            exit('error');
         }
 
         header('P3P: CP="CURa ADMa DEVa PSAo PSDo OUR BUS UNI PUR INT DEM STA PRE COM NAV OTC NOI DSP COR"');
@@ -2487,14 +2488,7 @@ class D_Common extends CI_Controller {
                         foreach ($data as $t) {
                             $xml.= $this->_url_format($t['url'], date('Y-m-d', $t['updatetime'] ? $t['updatetime'] : $t['inputtime']));
                         }
-                        if ($data < 50) {
-                            // 模块单页
-                            if (isset($page['data'][APP_DIR])) {
-                                foreach ($page['data'][APP_DIR] as $t) {
-                                    !$t['urllink'] && $xml.= $this->_url_format($t['url'], date('Y-m-d'));
-                                }
-                            }
-                        }
+
                     }
                 }
             } else {
@@ -2521,14 +2515,6 @@ class D_Common extends CI_Controller {
                             if ($data) {
                                 foreach ($data as $t) {
                                     $xml.= $this->_url_format($t['url'], date('Y-m-d', $t['updatetime'] ? $t['updatetime'] : $t['inputtime']));
-                                }
-                                if ($data < 50) {
-                                    // 模块单页
-                                    if (isset($page['data'][$dir])) {
-                                        foreach ($page['data'][$dir] as $t) {
-                                            !$t['urllink'] && $xml.= $this->_url_format($t['url'], date('Y-m-d'));
-                                        }
-                                    }
                                 }
                             }
                         }
