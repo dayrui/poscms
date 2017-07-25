@@ -52,9 +52,9 @@ class Api extends M_Controller {
         $catid && $update['catid'] = $catid;
 
         $this->db
-             ->where('id', $did)
-             ->where('uid', $this->uid)
-             ->update($sid.'_'.$this->input->get('dir').'_draft', $update);
+            ->where('id', $did)
+            ->where('uid', $this->uid)
+            ->update($sid.'_'.$this->input->get('dir').'_draft', $update);
     }
 
     // ajax 实时保存添加内容
@@ -148,6 +148,7 @@ class Api extends M_Controller {
             $catid && $this->db->where_in('catid', $category[$catid]['catids']);
             if (isset($data['keyword']) && $data['keyword']
                 && $data['field'] && isset($field[$data['field']])) {
+                $data['keyword'] = dr_safe_replace(urldecode($data['keyword']));
                 if ($data['field'] == 'id') {
                     // id搜索
                     $id = array();
@@ -274,13 +275,13 @@ class Api extends M_Controller {
 
         $name = dr_safe_replace($this->input->get('name', TRUE));
         $style = dr_safe_replace($this->input->get('style', TRUE));
-        
+
         ob_start();
         $this->template->cron = 0;
         $this->template->display('statics/space/'.$style.'/'.$name);
         $html = ob_get_contents();
         ob_clean();
-        
+
         // 格式输出
         if (isset($_GET['return']) && $_GET['return'] == 'js') {
             $html = addslashes(str_replace(array("\r", "\n", "\t", chr(13)), array('', '', '', ''), $html));
@@ -345,12 +346,12 @@ class Api extends M_Controller {
      * 会员登录信息JS调用
      */
     public function userinfo() {
-        
+
         ob_start();
         $this->template->display('api.html');
         $html = ob_get_contents();
         ob_clean();
-        
+
         $callback = $this->input->get('callback', TRUE);
         if ($callback) {
             echo $callback.'('.json_encode(array('html' => $html)).')';
@@ -358,7 +359,7 @@ class Api extends M_Controller {
             $html = addslashes(str_replace(array("\r", "\n", "\t", chr(13)), array('', '', '', ''), $html));
             echo 'document.write("'.$html.'");';
         }
-        
+
         exit;
     }
 
@@ -643,7 +644,7 @@ class Api extends M_Controller {
             'allowed_types' => str_replace(',', '|', $ext),
             'file_ext_tolower' => TRUE,
         ));
-        
+
         if ($this->upload->do_upload(isset($_GET['fname']) ? $_GET['fname'] : 'Filedata')) {
             $info = $this->upload->data();
             $this->load->model('attachment_model');
@@ -661,6 +662,7 @@ class Api extends M_Controller {
     // 文件下载并上传
     public function down_file() {
 
+        // 获取url中的上传参数
         $p = array();
         $url = explode('&', $this->input->post('url'));
 
@@ -676,7 +678,7 @@ class Api extends M_Controller {
 
         // 是否允许上传附件
         !$this->member['adminid'] && !$member_rule['is_upload'] && exit(dr_json(0, fc_lang('您的会员组无权上传附件')));
-        
+
         // 附件总大小判断
         if (!$this->member['adminid'] && $member_rule['attachsize']) {
             $data = $this->db->select_sum('filesize')->where('uid', $this->uid)->get('attachment')->row_array();
@@ -697,7 +699,7 @@ class Api extends M_Controller {
         $exts = (array)explode(',', $ext);
         !in_array($fileext, $exts) && exit(dr_json(0, '远程文件扩展名（'.$fileext.'）不允许'));
         $fileext == 'php' && exit(dr_json(0, '远程文件扩展名（'.$fileext.'）不允许'));
-        
+
         $filename = substr(md5(time()), 0, 7).rand(100, 999);
         if (@file_put_contents($path.$filename.'.'.$fileext, $file)) {
             $info = array(
@@ -710,9 +712,7 @@ class Api extends M_Controller {
             $this->attachment_model->siteid = $p['siteid'] ? $p['siteid'] : SITE_ID;
             $result = $this->attachment_model->upload($this->uid, $info);
             if (is_array($result)) {
-                list($id, $file, $_ext) = $result;
-                //$icon = is_file(WEBPATH.'statics/admin/images/ext/'.$_ext.'.gif') ? THEME_PATH.'admin/images/ext/'.$_ext.'.gif' : THEME_PATH.'admin/images/ext/blank.gif';
-                //echo json_encode(array('status'=>1, 'icon'=> $icon, 'size' => dr_format_file_size($info['file_size'] * 1024), 'id'=>$id));exit;
+                list($id) = $result;
                 echo json_encode(array('status'=>1, 'id'=>$id, 'name' => dr_strcut($filename, 10).'.'.$fileext));exit;
             } else {
                 @unlink($info['full_path']);
@@ -732,19 +732,19 @@ class Api extends M_Controller {
 
         $uid = (int)dr_authcode(str_replace(' ', '+', $this->input->post('session')), 'DECODE');
         !$uid && exit('0,'.fc_lang('游客不允许上传附件'));
-        
+
         // 根据页面传入的session来获取当前登录uid，未获取到uid时提示游客无法上传
         $this->member = $this->member_model->get_member($uid); // 获取会员信息
 
         // 游客不允许上传，未获取到会员信息时提示游客无法上传
         !$this->member && exit('0,'.fc_lang('游客不允许上传附件'));
-        
+
         // 会员组权限
         $member_rule = $this->get_cache('member', 'setting', 'permission', $this->member['mark']);
 
         // 是否允许上传附件
         !$this->member['adminid'] && !$member_rule['is_upload'] && exit('0,'.fc_lang('您的会员组无权上传附件'));
-        
+
         // 附件总大小判断
         if (!$this->member['adminid'] && $member_rule['attachsize']) {
             $data = $this->db->select_sum('filesize')->where('uid', $uid)->get('attachment')->row_array();
@@ -791,13 +791,13 @@ class Api extends M_Controller {
 
         // 游客不允许上传，未获取到会员信息时提示游客无法上传
         !$this->member && exit(json_encode(array('code'=>0, 'msg'=>fc_lang('游客不允许上传附件'))));
-        
+
         // 会员组权限
         $member_rule = $this->get_cache('member', 'setting', 'permission', $this->member['mark']);
 
         // 是否允许上传附件
         !$this->member['adminid'] && !$member_rule['is_upload'] && exit(json_encode(array('code'=>0, 'msg'=>fc_lang('您的会员组无权上传附件'))));
-        
+
         // 附件总大小判断
         if (!$this->member['adminid'] && $member_rule['attachsize']) {
             $data = $this->db->select_sum('filesize')->where('uid', $this->uid)->get('attachment')->row_array();
@@ -915,7 +915,7 @@ class Api extends M_Controller {
         ));
         $this->template->display('myattach.html', 'admin');
     }
-    
+
     // 输入上传信息
     public function upload_input() {
         $this->template->assign(array(
@@ -924,7 +924,7 @@ class Api extends M_Controller {
         ));
         $this->template->display('upload_input.html', 'admin');
     }
-    
+
 
     /**
      * Ueditor上传(图片)
@@ -940,7 +940,7 @@ class Api extends M_Controller {
     public function ueupload() {
 
         !$this->uid && exit("{'url':'','title':'','original':'','state':'".fc_lang('会话超时，请重新登录')."'}");
-        
+
         // 是否允许上传附件
         !$this->member['adminid'] && !$this->member_rule['is_upload'] && exit("{'url':'','title':'','original':'','state':'".fc_lang('您的会员组无权上传附件')."'}");
 
@@ -949,7 +949,7 @@ class Api extends M_Controller {
             $filesize = (int)$data['filesize'];
             $filesize > $this->member_rule['attachsize'] * 1024 * 1024 && exit("{'url':'','title':'','original':'','state':'".fc_lang('附件空间不足！您的附件总空间%s，现有附件%s。', $this->member_rule['attachsize'].'MB', dr_format_file_size($filesize))."'}");
         }
-        
+
         $path = SYS_UPLOAD_PATH.'/'.date('Ym', SYS_TIME).'/';
         !is_dir($path) && dr_mkdirs($path);
 
@@ -1056,7 +1056,7 @@ class Api extends M_Controller {
         $id = (int)$this->input->get('id');
         $title = $this->input->get('title', TRUE);
         $module = $this->input->get('module');
-        
+
         (!$title || !$module) && exit('');
 
         $num = $this->db->where('id<>', $id)->where('title', $title)->count_all_results(SITE_ID.'_'.$module);
@@ -1070,36 +1070,7 @@ class Api extends M_Controller {
 
         $kw = $this->input->get('kw', TRUE);
         $kw = dr_safe_replace($kw ? $kw : $this->input->get('title'));
-        // 返回数据
-
-
-        $rt = '';
-
-        //tag数据
-        $tags = $this->dcache->get('tags-'.SITE_ID);
-        if ($tags) {
-            foreach ($tags as $t) {
-                // 找到了
-                if (strpos($kw, $t['name']) !== false) {
-                    $rt.= ','.$t['tags'];
-                }
-            }
-        }
-
-        if ($rt) {
-            exit(trim($rt, ',')) ;
-        }
-
-        $return = array();
-        //tag数据
-        $tags = $this->dcache->get('tag-'.SITE_ID);
-        if ($tags) {
-            foreach ($tags as $t) {
-                strpos($kw, $t) !== false && $return[] = $t;
-            }
-        }
-
-        echo @implode(',', $return);exit;
+        echo $this->_get_keyword($kw);exit;
     }
 
     /**
@@ -1149,9 +1120,9 @@ class Api extends M_Controller {
         }
         // 经验值扣减
         $this->member_rule['download_experience']
-        && !$this->db->where('type', 0)->where('mark', $mark)->count_all_results($table) 
+        && !$this->db->where('type', 0)->where('mark', $mark)->count_all_results($table)
         && $this->member_model->update_score(0, $this->uid, (int)$this->member_rule['download_experience'], $mark, fc_lang('附件下载'));
-    
+
 
         $file = $info['attachment'];
         $this->db->where('id', $id)->set('download', 'download+1', FALSE)->update('attachment');
@@ -1184,87 +1155,87 @@ class Api extends M_Controller {
 
         $code = $this->input->get('code', TRUE);
         $MEMBER = $this->get_cache('member');
-		
-		if (IS_POST) {
-			$user = dr_string2array(dr_authcode($this->input->post('code'), 'DECODE'));
+
+        if (IS_POST) {
+            $user = dr_string2array(dr_authcode($this->input->post('code'), 'DECODE'));
             !$user && $this->member_msg(fc_lang('数据已过期，请重新登录'));
-			//
-			$data = $this->input->post('data');
-			$type = $this->input->post('type');
-			$error1 = $error2 = '';
-			
-			if ($type == 1) {
-				// 登录
-				$rt = $this->member_model->login($data['username'], $data['password'], 36000);
-				if (strlen($rt) > 3) {
-				    // 登录成功
+            //
+            $data = $this->input->post('data');
+            $type = $this->input->post('type');
+            $error1 = $error2 = '';
+
+            if ($type == 1) {
+                // 登录
+                $rt = $this->member_model->login($data['username'], $data['password'], 36000);
+                if (strlen($rt) > 3) {
+                    // 登录成功
                     !$this->uid && $this->member_msg(fc_lang('绑定失败，请重新登录'));
-					// 绑定到此账号
-					$user['uid'] = $this->uid;
-					$this->db->insert('member_oauth', $user);
+                    // 绑定到此账号
+                    $user['uid'] = $this->uid;
+                    $this->db->insert('member_oauth', $user);
                     $this->hooks->call_hook('member_login', $data); // 登录成功挂钩点
-					$this->member_msg(dr_weixin_emoji($user['nickname']).'，'.fc_lang('登录成功').$rt, dr_member_url('home/index'), 1, 1);
-				} elseif ($rt == -1) {
-					$error1 = fc_lang('会员不存在');
-				} elseif ($rt == -2) {
-					$error1 = fc_lang('密码不正确');
-				} elseif ($rt == -3) {
-					$error1 = fc_lang('Ucenter注册失败');
-				} elseif ($rt == -4) {
-					$error1 = fc_lang('Ucenter：会员名称不合法');
-				}
-			} else {
-				// 注册
-				$id = $this->member_model->register($data);
-				if ($id > 0) {
-				    // 注册成功
+                    $this->member_msg(dr_weixin_emoji($user['nickname']).'，'.fc_lang('登录成功').$rt, dr_member_url('home/index'), 1, 1);
+                } elseif ($rt == -1) {
+                    $error1 = fc_lang('会员不存在');
+                } elseif ($rt == -2) {
+                    $error1 = fc_lang('密码不正确');
+                } elseif ($rt == -3) {
+                    $error1 = fc_lang('Ucenter注册失败');
+                } elseif ($rt == -4) {
+                    $error1 = fc_lang('Ucenter：会员名称不合法');
+                }
+            } else {
+                // 注册
+                $id = $this->member_model->register($data);
+                if ($id > 0) {
+                    // 注册成功
                     $data['uid'] = $this->uid;
                     $this->hooks->call_hook('member_register_after', $data); // 注册之后挂钩点
                     // 注册后的登录
                     $rt = $this->member_model->login($id, $data['password'], 86400, 0, 1);
                     strlen($rt) > 3 && $this->hooks->call_hook('member_login', $data); // 登录成功挂钩点
-					// 绑定到此账号
-					$user['uid'] = $id;
-					$this->db->insert('member_oauth', $user);
-					$this->member_msg(dr_weixin_emoji($user['nickname']).'，'.fc_lang('登录成功').$rt, dr_member_url('home/index'), 1, 1);
+                    // 绑定到此账号
+                    $user['uid'] = $id;
+                    $this->db->insert('member_oauth', $user);
+                    $this->member_msg(dr_weixin_emoji($user['nickname']).'，'.fc_lang('登录成功').$rt, dr_member_url('home/index'), 1, 1);
                 } elseif ($id == -1) {
-					$error = array('name' => 'username', 'msg' => fc_lang('该会员【%s】已经被注册', $data['username']));
-				} elseif ($id == -2) {
-					$error = array('name' => 'email', 'msg' => fc_lang('邮箱格式不正确'));
-				} elseif ($id == -3) {
-					$error = array('name' => 'email', 'msg' => fc_lang('该邮箱【%s】已经被注册', $data['email']));
-				} elseif ($id == -4) {
-					$error = array('name' => 'username', 'msg' => fc_lang('同一IP在限制时间内注册过多'));
-				} elseif ($id == -5) {
-					$error = array('name' => 'username', 'msg' => fc_lang('Ucenter：会员名称不合法'));
-				} elseif ($id == -6) {
-					$error = array('name' => 'username', 'msg' => fc_lang('Ucenter：包含不允许注册的词语'));
-				} elseif ($id == -7) {
-					$error = array('name' => 'username', 'msg' => fc_lang('Ucenter：Email格式有误'));
-				} elseif ($id == -8) {
-					$error = array('name' => 'username', 'msg' => fc_lang('Ucenter：Email不允许注册'));
-				} elseif ($id == -9) {
-					$error = array('name' => 'username', 'msg' => fc_lang('Ucenter：Email已经被注册'));
-				} elseif ($id == -10) {
-					$error = array('name' => 'phone', 'msg' => fc_lang('手机号码必须是11位的整数'));
-				} elseif ($id == -11) {
-					$error = array('name' => 'phone', 'msg' => fc_lang('该手机号码已经注册'));
-				}
-				$error2 = $error['msg'];
-			}
-			
-			$this->template->assign(array(
-				'type' => $type,
-				'code' => dr_authcode(dr_array2string($user), 'ENCODE'),
-				'oauth' => $user,
-				'error_1' => $error1,
-				'error_2' => $error2,
-            	'regfield' => $MEMBER['setting']['regfield'],
-			));
-			$this->template->display('oauth.html');
-			exit;
-		}
-		
+                    $error = array('name' => 'username', 'msg' => fc_lang('该会员【%s】已经被注册', $data['username']));
+                } elseif ($id == -2) {
+                    $error = array('name' => 'email', 'msg' => fc_lang('邮箱格式不正确'));
+                } elseif ($id == -3) {
+                    $error = array('name' => 'email', 'msg' => fc_lang('该邮箱【%s】已经被注册', $data['email']));
+                } elseif ($id == -4) {
+                    $error = array('name' => 'username', 'msg' => fc_lang('同一IP在限制时间内注册过多'));
+                } elseif ($id == -5) {
+                    $error = array('name' => 'username', 'msg' => fc_lang('Ucenter：会员名称不合法'));
+                } elseif ($id == -6) {
+                    $error = array('name' => 'username', 'msg' => fc_lang('Ucenter：包含不允许注册的词语'));
+                } elseif ($id == -7) {
+                    $error = array('name' => 'username', 'msg' => fc_lang('Ucenter：Email格式有误'));
+                } elseif ($id == -8) {
+                    $error = array('name' => 'username', 'msg' => fc_lang('Ucenter：Email不允许注册'));
+                } elseif ($id == -9) {
+                    $error = array('name' => 'username', 'msg' => fc_lang('Ucenter：Email已经被注册'));
+                } elseif ($id == -10) {
+                    $error = array('name' => 'phone', 'msg' => fc_lang('手机号码必须是11位的整数'));
+                } elseif ($id == -11) {
+                    $error = array('name' => 'phone', 'msg' => fc_lang('该手机号码已经注册'));
+                }
+                $error2 = $error['msg'];
+            }
+
+            $this->template->assign(array(
+                'type' => $type,
+                'code' => dr_authcode(dr_array2string($user), 'ENCODE'),
+                'oauth' => $user,
+                'error_1' => $error1,
+                'error_2' => $error2,
+                'regfield' => $MEMBER['setting']['regfield'],
+            ));
+            $this->template->display('oauth.html');
+            exit;
+        }
+
         $config['url'] = SITE_URL.'index.php?s=member&c=api&m=oauth&id='.$appid; // 回调地址设置
         $this->load->library('OAuth2');
 
@@ -1285,19 +1256,19 @@ class Api extends M_Controller {
                 if (is_array($user) && $user['oid']) {
                     !$user['nickname'] && $user['nickname'] = substr($user['oid'], 0, 10);
                     $code = $this->member_model->OAuth_login($appid, $user);
-					  if ($code == 'bang') {
-							// 绑定账号
-							$this->template->assign(array(
-								'type' => 1,
-								'code' => dr_authcode(dr_array2string($user), 'ENCODE'),
-								'oauth' => $user,
-            					'regfield' => $MEMBER['setting']['regfield'],
-							));
-							$this->template->display('oauth.html');
-						} else {
-							// 直接注册
-                    		$this->member_msg(dr_weixin_emoji($user['nickname']).'，'.fc_lang('登录成功').$code, dr_member_url('home/index'), 1, 3);
-						}
+                    if ($code == 'bang') {
+                        // 绑定账号
+                        $this->template->assign(array(
+                            'type' => 1,
+                            'code' => dr_authcode(dr_array2string($user), 'ENCODE'),
+                            'oauth' => $user,
+                            'regfield' => $MEMBER['setting']['regfield'],
+                        ));
+                        $this->template->display('oauth.html');
+                    } else {
+                        // 直接注册
+                        $this->member_msg(dr_weixin_emoji($user['nickname']).'，'.fc_lang('登录成功').$code, dr_member_url('home/index'), 1, 3);
+                    }
                 } else {
                     $this->member_msg(fc_lang('OAuth回调错误: 获取用户信息失败'));
                 }
@@ -1359,9 +1330,9 @@ class Api extends M_Controller {
         $uid = (int)$this->input->get('uid');
         $username = $this->input->get('username');
         $callback = isset($_GET['callback']) ? $this->input->get('callback', TRUE) : 'callback';
-        
+
         !dr_is_app('pms') && exit;
-        
+
         $this->load->add_package_path(FCPATH.'app/pms/');
         $this->load->model('pm_model');
 
@@ -1379,9 +1350,9 @@ class Api extends M_Controller {
         } elseif ($this->input->get('action') == 'send') {
             $data['message'] = $this->input->get('msg', TRUE);
             $data['username'] = $username;
-            
+
             (!$this->uid || !$this->member) && exit($callback . '(' . json_encode(array('status' => 0, 'msg' => fc_lang('会话超时，请重新登录'))) . ')');
-            
+
             $error = $this->pm_model->send($this->uid, $this->member['username'], $data);
             $error && exit($callback . '(' . json_encode(array('status' => 0, 'msg' => $error)) . ')');
             exit($callback . '(' . json_encode(array('status' => 1)) . ')');
