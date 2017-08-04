@@ -2,7 +2,7 @@
 <script language="javascript">
     // 这是加入收藏夹的ajax请求，我就随意写了一下提示信息，至于美化啊什么交给你们了
     function dr_favorite() {
-        $.get("/index.php?s={MOD_DIR}c=api&m=favorite&id={$id}", function(data){
+        $.get("/index.php?s={MOD_DIR}&c=api&m=favorite&id={$id}", function(data){
             if (data == 1) {
                 dr_tips("没有登录，不能收藏");
             } else if (data == 2) {
