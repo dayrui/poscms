@@ -97,7 +97,7 @@ class Install extends CI_Controller {
                     }
                     if ($mysqli) {
                         if (!@mysqli_real_connect($mysqli, $data['dbhost'], $data['dbuser'], $data['dbpw'])) {
-                            exit(dr_json(0, '无法连接到数据库服务器（'.$data['dbhost'].'），请检查用户名（'.$data['dbuser'].'）和密码（'.$data['dbpw'].'）是否正确'));
+                            exit(dr_json(0, '[mysqli_real_connect] 无法连接到数据库服务器（'.$data['dbhost'].'），请检查用户名（'.$data['dbuser'].'）和密码（'.$data['dbpw'].'）是否正确'));
                         }
                         if (!@mysqli_select_db($mysqli, $data['dbname'])) {
                             if (!@mysqli_query($mysqli, 'CREATE DATABASE '.$data['dbname'])) {
