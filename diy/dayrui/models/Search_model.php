@@ -235,6 +235,7 @@ class Search_model extends CI_Model {
 
     // 条件组合
     private function _where($table, $name, $value, $field) {
+        $value = dr_safe_replace($value);
         if (strpos($value, '%') === 0
             && strrchr($value, '%') === '%') {
             // like 条件
