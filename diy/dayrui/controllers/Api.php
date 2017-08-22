@@ -38,34 +38,6 @@ class Api extends M_Controller {
         exit;
     }
 
-    /**
-     * 保存浏览器定位坐标
-     */
-    public function position() {
-
-        $value = dr_safe_replace($this->input->get('value', true));
-        $cookie = get_cookie('my_position');
-        if ($cookie != $value) {
-            set_cookie('my_position', $value, 999999);
-            exit('ok');
-        }
-        exit('none');
-    }
-
-    /**
-     * 保存浏览器定位城市
-     */
-    public function city() {
-
-        $value = dr_safe_replace(str_replace(array('自治区', '自治县', '自治州', '市','县', '州'), '', $this->input->get('value', true)));
-        $cookie = get_cookie('my_city');
-        if ($cookie != $value) {
-            set_cookie('my_city', $value, 999999);
-            exit('ok');
-        }
-        exit('none');
-    }
-
 
     /**
      * 广告访问
@@ -292,44 +264,7 @@ class Api extends M_Controller {
         $data = $this->callback_json(array('html' => $hits));
         echo $this->input->get('callback', TRUE).'('.$data.')';exit;
 	}
-	
-	/**
-	 * 发送桌面快捷方式
-	 */
-	public function desktop() {
-		
-		$site = (int)$this->input->get('site');
-		$module = $this->input->get('module');
-		
-		if ($site && !$module) {
-			$url = $this->site_info[$site]['SITE_URL'];
-			$name = $this->site_info[$site]['SITE_NAME'].'.url';
-		} elseif ($site && $module) {
-			$mod = $this->get_cache('module-'.$site.'-'.$module);
-			$url = $mod['url'];
-			$name = $mod['name'].'.url';
-		}  else {
-			$url = $this->site_info[SITE_ID]['SITE_URL'];
-			$name = $this->site_info[SITE_ID]['SITE_NAME'].'.url';
-		}
-		
-		$data = "
-		[InternetShortcut]
-		URL={$url}
-		IconFile={$url}favicon.ico
-		Prop3=19,2
-		IconIndex=1
-		";
-		$mime = 'application/octet-stream';
-		
-		header('Content-Type: "' . $mime . '"');
-		header('Content-Disposition: attachment; filename="' . $name . '"');
-		header("Content-Transfer-Encoding: binary");
-		header('Expires: 0');
-		header('Pragma: no-cache');
-		header("Content-Length: " . strlen($data));
-		echo $data;
-	}
+
 	
 	/**
 	 * 伪静态测试
@@ -337,20 +272,6 @@ class Api extends M_Controller {
 	public function test() {
 		header('Content-Type: text/html; charset=utf-8');
 		echo '服务器支持伪静态';
-	}
-	
-	/**
-	 * 自定义数据调用（老版本）
-	 */
-	public function data() {
-		exit('此方法已失效，请使用m=data2');
-	}
-	
-	/**
-	 * 自定义数据调用（新版本）
-	 */
-	public function data2() {
-
 	}
 
     /**
