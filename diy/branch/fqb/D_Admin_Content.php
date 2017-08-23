@@ -73,7 +73,7 @@ class D_Admin_Content extends M_Controller {
             $data = $this->db->limit($psize, $psize * ($page - 1))->order_by('id DESC')->get($table)->result_array();
             foreach ($data as $t) {
                 $kw = $t['title'].' '.$t['description'];
-                $update = $this->_get_keyword($kw);
+                $update = $this->my_get_keyword($kw);
                 if ($update) {
                     $this->db->where('id='.$t['id'])->update($table, array(
                         'keywords' => $update
@@ -339,7 +339,7 @@ class D_Admin_Content extends M_Controller {
 
     }
 
-    private function _get_keyword($kw){
+    private function my_get_keyword($kw){
 
         $rt = '';
         //tag数据
