@@ -85,7 +85,7 @@ class D_Admin_Table extends M_Controller {
 				$select->where($this->tfield.' BETWEEN ' . $param['start'] . ' AND ' . $param['end']);
 			} elseif (isset($param['end']) && $param['end']) {
 				$param['end'] = strtotime(date('Y-m-d 23:59:59', $param['end']));
-				$param['start'] = 0;
+				$param['start'] = 1;
 				$select->where($this->tfield.' BETWEEN ' . $param['start'] . ' AND ' . $param['end']);
 			}
 		}
