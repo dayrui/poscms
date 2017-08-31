@@ -2349,7 +2349,7 @@ class D_Common extends CI_Controller {
         if (!$this->uid) {
             // 未登录
             if (isset($_GET['jsonp']) && $_GET['jsonp']) {
-                echo $this->input->get('callback', TRUE).'('.json_encode(array('code' => '1')).')';exit;
+                echo dr_safe_replace($this->input->get('callback', TRUE)).'('.json_encode(array('code' => '1')).')';exit;
             } else {
                 exit('1');
             }
@@ -2363,7 +2363,7 @@ class D_Common extends CI_Controller {
         if (!$data) {
             // 文档不存在
             if (isset($_GET['jsonp']) && $_GET['jsonp']) {
-                echo $this->input->get('callback', TRUE).'('.json_encode(array('code' => '2')).')';exit;
+                echo dr_safe_replace($this->input->get('callback', TRUE)).'('.json_encode(array('code' => '2')).')';exit;
             } else {
                 exit('2');
             }
@@ -2381,7 +2381,7 @@ class D_Common extends CI_Controller {
                 ));
                 // 更新成功
                 if (isset($_GET['jsonp']) && $_GET['jsonp']) {
-                    echo $this->input->get('callback', TRUE).'('.json_encode(array('code' => '3')).')';exit;
+                    echo dr_safe_replace($this->input->get('callback', TRUE)).'('.json_encode(array('code' => '3')).')';exit;
                 } else {
                     exit('3');
                 }
@@ -2399,7 +2399,7 @@ class D_Common extends CI_Controller {
                 $c = $this->db->where('eid', $eid)->count_all_results($table);
                 $this->db->where('id', $eid)->set('favorites', $c)->update(SITE_ID.'_'.APP_DIR.'_extend');
                 if (isset($_GET['jsonp']) && $_GET['jsonp']) {
-                    echo $this->input->get('callback', TRUE).'('.json_encode(array('code' => '4')).')';exit;
+                    echo dr_safe_replace($this->input->get('callback', TRUE)).'('.json_encode(array('code' => '4')).')';exit;
                 } else {
                     exit('4');
                 }
@@ -2413,7 +2413,7 @@ class D_Common extends CI_Controller {
                 ));
                 // 更新成功
                 if (isset($_GET['jsonp']) && $_GET['jsonp']) {
-                    echo $this->input->get('callback', TRUE).'('.json_encode(array('code' => '3')).')';exit;
+                    echo dr_safe_replace($this->input->get('callback', TRUE)).'('.json_encode(array('code' => '3')).')';exit;
                 } else {
                     exit('3');
                 }
@@ -2431,7 +2431,7 @@ class D_Common extends CI_Controller {
                 $c = $this->db->where('cid', $mid)->count_all_results($table);
                 $this->db->where('id', $mid)->set('favorites', $c)->update(SITE_ID.'_'.APP_DIR);
                 if (isset($_GET['jsonp']) && $_GET['jsonp']) {
-                    echo $this->input->get('callback', TRUE).'('.json_encode(array('code' => '4')).')';exit;
+                    echo dr_safe_replace($this->input->get('callback', TRUE)).'('.json_encode(array('code' => '4')).')';exit;
                 } else {
                     exit('4');
                 }
@@ -2675,7 +2675,7 @@ class D_Common extends CI_Controller {
     // jsonp 格式返回
     public function return_jsonp($data) {
 
-        echo $this->input->get('callback', TRUE).'('.$data.')';exit;
+        echo dr_safe_replace($this->input->get('callback', TRUE)).'('.$data.')';exit;
     }
 
 

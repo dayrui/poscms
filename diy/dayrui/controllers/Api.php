@@ -29,7 +29,7 @@ class Api extends M_Controller {
 		// 页面输出
 		if ($format == 'jsonp') {
 			$data = $this->callback_json(array('html' => $html));
-			echo $this->input->get('callback', TRUE).'('.$data.')';
+			echo dr_safe_replace($this->input->get('callback', TRUE)).'('.$data.')';
 		} elseif ($format == 'json') {
 			echo $this->callback_json(array('html' => $html));
 		} else {
@@ -176,7 +176,7 @@ class Api extends M_Controller {
             echo 'document.write("'.addslashes(str_replace(array("\r", "\n", "\t", chr(13)), array('', '', '', ''), $html)).'");';
         } else {
             $data = $this->callback_json(array('html' => $html));
-            echo $this->input->get('callback', TRUE).'('.$data.')';
+            echo dr_safe_replace($this->input->get('callback', TRUE)).'('.$data.')';
         }
     }
 
@@ -190,7 +190,7 @@ class Api extends M_Controller {
         $mod = $this->get_cache('module-'.SITE_ID.'-'.$dir);
         if (!$mod) {
             $data = $this->callback_json(array('html' => 0));
-            echo $this->input->get('callback', TRUE).'('.$data.')';exit;
+            echo dr_safe_replace($this->input->get('callback', TRUE)).'('.$data.')';exit;
         }
 
         // 获取主表时间段
@@ -226,7 +226,7 @@ class Api extends M_Controller {
             'dir' => $dir,
         ));
         // 输出数据
-        echo $this->input->get('callback', TRUE).'('.$this->callback_json(array('html' => $hits)).')';exit;
+        echo dr_safe_replace($this->input->get('callback', TRUE)).'('.$this->callback_json(array('html' => $hits)).')';exit;
 	}
 
     /**
@@ -239,7 +239,7 @@ class Api extends M_Controller {
         $mod = $this->get_cache('module-'.SITE_ID.'-'.$dir);
         if (!$mod) {
             $data = $this->callback_json(array('html' => 0));
-            echo $this->input->get('callback', TRUE).'('.$data.')';exit;
+            echo dr_safe_replace($this->input->get('callback', TRUE)).'('.$data.')';exit;
         }
 
         $name = 'ehits'.$dir.SITE_ID.$id;
@@ -262,7 +262,7 @@ class Api extends M_Controller {
             'dir' => $dir,
         ));
         $data = $this->callback_json(array('html' => $hits));
-        echo $this->input->get('callback', TRUE).'('.$data.')';exit;
+        echo dr_safe_replace($this->input->get('callback', TRUE)).'('.$data.')';exit;
 	}
 
 	

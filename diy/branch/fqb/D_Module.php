@@ -224,7 +224,7 @@ class D_Module extends D_Common {
         $eid = (int)$this->input->get('eid');
 
         $mod = $this->get_cache('module-'.SITE_ID.'-'.$this->dir);
-        !$mod && exit($this->input->get('callback', TRUE).'('.json_encode(array('html' => '模块【'.$this->dir.'】不存在')).')');
+        !$mod && exit(dr_safe_replace($this->input->get('callback', TRUE)).'('.json_encode(array('html' => '模块【'.$this->dir.'】不存在')).')');
 
         $name = $id ? 'show'.$this->dir.SITE_ID.$id : 'extend'.$this->dir.SITE_ID.$id;
         $data = $this->get_cache_data($name);
@@ -234,7 +234,7 @@ class D_Module extends D_Common {
             if (!$data) {
                 $this->load->model('content_model');
                 $data = $this->content_model->get($id);
-                !$data && exit($this->input->get('callback', TRUE).'('.json_encode(array('html' => '内容不存在')).')');
+                !$data && exit(dr_safe_replace($this->input->get('callback', TRUE)).'('.json_encode(array('html' => '内容不存在')).')');
             }
             // 字段
             $cat = $mod['category'][$data['catid']];
@@ -250,7 +250,7 @@ class D_Module extends D_Common {
             if (!$data) {
                 $this->load->model('content_model');
                 $data = $this->content_model->get_extend($eid);
-                !$data && exit($this->input->get('callback', TRUE).'('.json_encode(array('html' => '扩展内容不存在')).')');
+                !$data && exit(dr_safe_replace($this->input->get('callback', TRUE)).'('.json_encode(array('html' => '扩展内容不存在')).')');
             }
             // 格式化输出自定义字段
             $fields = $mod['extend'];
@@ -259,7 +259,7 @@ class D_Module extends D_Common {
             //
             $tpl = 'extend_buy.html';
         } else {
-            echo $this->input->get('callback', TRUE).'('.json_encode(array('html' => '无参数')).')';exit;
+            echo dr_safe_replace($this->input->get('callback', TRUE)).'('.json_encode(array('html' => '无参数')).')';exit;
         }
 
         $fields['inputtime'] = array('fieldtype' => 'Date');
@@ -282,15 +282,15 @@ class D_Module extends D_Common {
 
         // 无收费字段
         if (!$fees) {
-            echo $this->input->get('callback', TRUE).'('.json_encode(array('html' => '此模块内容没有收费字段')).')';exit;
+            echo dr_safe_replace($this->input->get('callback', TRUE)).'('.json_encode(array('html' => '此模块内容没有收费字段')).')';exit;
         } elseif (!isset($data[$fees])) {
-            echo $this->input->get('callback', TRUE).'('.json_encode(array('html' => '此模块内容收费字段内容没有填写')).')';exit;
+            echo dr_safe_replace($this->input->get('callback', TRUE)).'('.json_encode(array('html' => '此模块内容收费字段内容没有填写')).')';exit;
         }
         // 判断是否开启阅读收费
         if ($data[$fees]) {
             /*
             if (!$this->markrule || strlen($this->markrule) == 1) {
-                #exit($this->input->get('callback', TRUE).'('.json_encode(array('html' => '当前会员组（'.($this->member['groupname'] ? $this->member['groupname'] : '游客').'）无权限查看收费内容')).')');
+                #exit(dr_safe_replace($this->input->get('callback', TRUE)).'('.json_encode(array('html' => '当前会员组（'.($this->member['groupname'] ? $this->member['groupname'] : '游客').'）无权限查看收费内容')).')');
             }*/
             // 判断用户权限
             if ($this->uid) {
@@ -300,7 +300,7 @@ class D_Module extends D_Common {
                 // 当前类型是扩展时判定一下主内容是否被购买
                 $eid && $data['is_buy'] == 0 && $data['is_buy'] = $this->db->where('cid='.(int)$data['cid'].' and eid=0 and uid='.$this->uid)->count_all_results($table);
             } else {
-                exit($this->input->get('callback', TRUE).'('.json_encode(array('html' => '收费内容请登录之后再查看')).')');
+                exit(dr_safe_replace($this->input->get('callback', TRUE)).'('.json_encode(array('html' => '收费内容请登录之后再查看')).')');
             }
         } else {
             // 未开启时默认为显示
@@ -340,7 +340,7 @@ class D_Module extends D_Common {
             $this->template->display($tpl);
             $html = ob_get_contents();
             ob_clean();
-            echo $this->input->get('callback', TRUE).'('.json_encode(array('html' => $html)).')';exit;
+            echo dr_safe_replace($this->input->get('callback', TRUE)).'('.json_encode(array('html' => $html)).')';exit;
         }
     }
 
