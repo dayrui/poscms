@@ -136,7 +136,7 @@
 
                     <!--第一层：调用栏目-->
                     {list action=category module=share pid=0}
-                    <li class="menu-dropdown classic-menu-dropdown {if (MOD_DIR == $t.mid && $catid && in_array($catid, $t.catids)) || (MOD_DIR && $t.mid==MOD_DIR)} active{/if}">
+                    <li class="menu-dropdown classic-menu-dropdown {if $catid && in_array($catid, $t.catids)} active{/if}">
                         <a href="{$t.url}" title="{$t.name}">{$t.name}</a>
                         {if $t.child}
                         <ul class="dropdown-menu pull-left">
