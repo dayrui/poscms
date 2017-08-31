@@ -209,7 +209,7 @@ class D_Comment extends M_Controller {
         $html = ob_get_contents();
         ob_clean();
         $data = $this->callback_json(array('html' => $html));
-        echo $this->input->get('callback', TRUE).'('.$data.')';
+        echo dr_safe_replace($this->input->get('callback', TRUE)).'('.$data.')';
     }
 
     // 发布评论

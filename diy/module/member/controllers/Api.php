@@ -217,7 +217,7 @@ class Api extends M_Controller {
     public function notice() {
 
         $value = $this->uid ? $this->db->where('uid', (int)$this->uid)->count_all_results('member_new_notice') : 0;
-        $callback = isset($_GET['callback']) ? $this->input->get('callback', TRUE) : 'callback';
+        $callback = isset($_GET['callback']) ? dr_safe_replace($this->input->get('callback', TRUE)) : 'callback';
         exit($callback . '(' . json_encode(array('status' => $value)) . ')');
     }
 
@@ -352,7 +352,7 @@ class Api extends M_Controller {
         $html = ob_get_contents();
         ob_clean();
 
-        $callback = $this->input->get('callback', TRUE);
+        $callback = dr_safe_replace($this->input->get('callback', TRUE));
         if ($callback) {
             echo $callback.'('.json_encode(array('html' => $html)).')';
         } else {
@@ -1288,7 +1288,7 @@ class Api extends M_Controller {
         $mod = $this->get_cache('space-model', $mid);
         if (!$mod) {
             $data = $this->callback_json(array('html' => 0));
-            echo $this->input->get('callback', TRUE).'('.$data.')';exit;
+            echo dr_safe_replace($this->input->get('callback', TRUE)).'('.$data.')';exit;
         }
 
         $table = $this->db->dbprefix('space_'.$mod['table']);
@@ -1304,7 +1304,7 @@ class Api extends M_Controller {
         $this->db->where('id', $id)->update($table, array('hits' => $hits));
 
         $data = $this->callback_json(array('html' => $hits));
-        echo $this->input->get('callback', TRUE).'('.$data.')';exit;
+        echo dr_safe_replace($this->input->get('callback', TRUE)).'('.$data.')';exit;
     }
 
     /**
@@ -1329,7 +1329,7 @@ class Api extends M_Controller {
 
         $uid = (int)$this->input->get('uid');
         $username = $this->input->get('username');
-        $callback = isset($_GET['callback']) ? $this->input->get('callback', TRUE) : 'callback';
+        $callback = isset($_GET['callback']) ? dr_safe_replace($this->input->get('callback', TRUE)) : 'callback';
 
         !dr_is_app('pms') && exit;
 

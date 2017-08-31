@@ -60,7 +60,7 @@ class Register extends M_Controller {
 
 		if (IS_POST) {
 			$data = $this->input->post('data', TRUE);
-			$back_url = $_POST['back'] ? urldecode($this->input->post('back')) : '';
+			$back_url = $_POST['back'] ? urldecode($this->input->post('back', true)) : '';
 			$back_url = $back_url && strpos($back_url, 'register') === FALSE ? $back_url : dr_member_url('home/index');
 			if (!$json && $MEMBER['setting']['regcode'] && !$this->check_captcha('code')) {
 				$error = array('name' => 'code', 'msg' => fc_lang('验证码不正确'));
@@ -131,13 +131,13 @@ class Register extends M_Controller {
             exit;
 		} else {
 			$data = array();
-			$back_url = $this->input->get('back') ? $this->input->get('back') : (isset($_SERVER['HTTP_REFERER']) ? (strpos($_SERVER['HTTP_REFERER'], 'login') !== false ? '' : $_SERVER['HTTP_REFERER']) : '');
+
 		}
 
 		$this->template->assign(array(
 			'data' => $data,
 			'code' => $MEMBER['setting']['regcode'],
-			'back_url' => $back_url,
+			'back_url' => '',
 			'regfield' => $MEMBER['setting']['regfield'],
 			'meta_title' => fc_lang('会员注册'),
 		));
