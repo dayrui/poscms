@@ -2856,6 +2856,19 @@ function dr_is_redirect($type, $url) {
 
 }
 
+// 文件上传临时目录
+function dr_upload_temp_path() {
+
+    if (function_exists('ini_get')) {
+        $path = ini_get('upload_tmp_dir');
+        if ($path) {
+            return rtrim($path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+        }
+    }
+
+    return WEBPATH.'cache/file/';
+}
+
 // 字段表单控件输出
 function dr_field_form($id, $value = '', $html = '{value}') {
 
