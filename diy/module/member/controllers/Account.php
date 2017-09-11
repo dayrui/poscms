@@ -414,7 +414,7 @@ class Account extends M_Controller {
         !$post && exit(function_exists('iconv') ? iconv('UTF-8', 'GBK', '环境php://input不支持') : 'php://input NULL');
         
         // 创建图片存储文件夹
-        $dir = SYS_UPLOAD_PATH.'/member/'.$this->uid.'/';
+        $dir = dr_upload_temp_path().'member/'.$this->uid.'/';
         @dr_dir_delete($dir);
         !is_dir($dir) && dr_mkdirs($dir);
 
@@ -496,6 +496,27 @@ class Account extends M_Controller {
             @unlink($filename);
 
             (!is_file($dir.'45x45.jpg') || !is_file($dir.'90x90.jpg')) && exit(function_exists('iconv') ? iconv('UTF-8', 'GBK', '文件创建失败') : 'File creation failure');
+        }
+
+        // ok
+        $my = SYS_UPLOAD_PATH.'/member/'.$this->uid.'/';
+        @dr_dir_delete($my);
+        !is_dir($my) && dr_mkdirs($my);
+
+        $c = 0;
+        if ($fp = @opendir($dir)) {
+            while (FALSE !== ($file = readdir($fp))) {
+                $ext = substr(strrchr($file, '.'), 1);
+                if (in_array(strtolower($ext), array('jpg', 'jpeg', 'png', 'gif'))) {
+                    if (copy($dir.$file, $my.$file)) {
+                        $c++;
+                    }
+                }
+            }
+            closedir($fp);
+        }
+        if (!$c) {
+            exit(iconv('UTF-8', 'GBK', fc_lang('未找到目录中的图片')));
         }
 // 上传图片到服务器
         if (defined('UCSSO_API')) {
