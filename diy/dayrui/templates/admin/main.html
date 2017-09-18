@@ -35,6 +35,18 @@
 
 {template "main2.html"}
 
+{if $admin.usermenu}
+<div class="row margin-bottom-20">
+    <div class="col-md-12">
+        <div class="admin-usermenu">
+            {loop $admin.usermenu $t}
+            <a class="btn btn-default" href="{$t.url}"> {$t.name} </a>
+            {/loop}
+        </div>
+    </div>
+</div>
+{/if}
+
 <div class="row">
     <div class="col-md-6 col-sm-6">
         <div class="portlet light ">
@@ -90,6 +102,10 @@
                         <tr>
                             <td class="mleft" align="right">{fc_lang('程序内核')}：</td>
                             <td>&nbsp;POSCMS&nbsp;v{DR_VERSION}&nbsp<span style="color:red"> 有新版本</span></td>
+                        </tr>
+                        <tr>
+                            <td class="mleft" align="right">{fc_lang('发行时间')}：</td>
+                            <td>&nbsp;{DR_UPDATE}</td>
                         </tr>
                         <tr>
                             <td class="mleft" align="right">{fc_lang('服务器环境')}：</td>

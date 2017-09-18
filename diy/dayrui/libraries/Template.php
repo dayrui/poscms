@@ -877,7 +877,7 @@ $.ajax({
 
                 $array = explode(',', $param['tag']);
                 foreach ($array as $name) {
-                    $name && $where[] = '(`title` LIKE "%'.$this->ci->db->escape_str($name).'%" OR `keywords` LIKE "%'.$this->ci->db->escape_str($name).'%")';
+                    $name && $where[] = '(`title` LIKE "%'.dr_safe_replace($name).'%" OR `keywords` LIKE "%'.dr_safe_replace($name).'%")';
                 }
 
                 // 栏目筛选
@@ -2282,19 +2282,19 @@ $.ajax({
                 $join = $string ? ' AND' : '';
                 switch ($t['adj']) {
                     case 'LIKE':
-                        $string.= $join." {$t['name']} LIKE \"".$this->ci->db->escape_str($t['value'])."\"";
+                        $string.= $join." {$t['name']} LIKE \"".dr_safe_replace($t['value'])."\"";
                         break;
 
                     case 'IN':
-                        $string.= $join." {$t['name']} IN (".$this->ci->db->escape_str($t['value']).")";
+                        $string.= $join." {$t['name']} IN (".dr_safe_replace($t['value']).")";
                         break;
 
                     case 'NOTIN':
-                        $string.= $join." {$t['name']} NOT IN (".$this->ci->db->escape_str($t['value']).")";
+                        $string.= $join." {$t['name']} NOT IN (".dr_safe_replace($t['value']).")";
                         break;
 
                     case 'NOT':
-                        $string.= $join.(is_numeric($t['value']) ? " {$t['name']} <> ".$t['value'] : " {$t['name']} <> \"".($t['value'] == "''" ? '' : $this->ci->db->escape_str($t['value']))."\"");
+                        $string.= $join.(is_numeric($t['value']) ? " {$t['name']} <> ".$t['value'] : " {$t['name']} <> \"".($t['value'] == "''" ? '' : dr_safe_replace($t['value']))."\"");
                         break;
 
                     case 'BETWEEN':
@@ -2313,7 +2313,7 @@ $.ajax({
                         if (strpos($t['name'], '`thumb`')) {
                             $t['value'] == 1 ? $string.= $join." {$t['name']}<>''" : $string.= $join." {$t['name']}=''";
                         } else {
-                            $string.= $join.(is_numeric($t['value']) ? " {$t['name']} = ".$t['value'] : " {$t['name']} = \"".($t['value'] == "''" ? '' : $this->ci->db->escape_str($t['value']))."\"");
+                            $string.= $join.(is_numeric($t['value']) ? " {$t['name']} = ".$t['value'] : " {$t['name']} = \"".($t['value'] == "''" ? '' : dr_safe_replace($t['value']))."\"");
                         }
                         break;
                 }

@@ -121,11 +121,6 @@ return array(
                         'icon' => 'fa fa-cog',
                     ),
                     array(
-                        'name' => '网站管理',
-                        'uri' => 'site/index',
-                        'icon' => 'fa fa-globe',
-                    ),
-                    array(
                         'name' => '内容模块',
                         'uri' => 'module/index',
                         'icon' => 'fa fa-cogs',
@@ -403,18 +398,6 @@ return array(
                     ),
                 )
             ),
-            array(
-                'name' => '应用插件',
-                'mark' => 'cloud-cloud',
-                'icon' => 'fa fa-cloud',
-                'menu' => array(
-                    array(
-                        'name' => '应用插件',
-                        'uri' => 'application/index',
-                        'icon' => 'fa fa-cloud',
-                    ),
-                )
-            ),
 
         )
     ),
@@ -435,21 +418,6 @@ return array(
                         'name' => '使用文档',
                         'uri' => 'api/helponline',
                         'icon' => 'fa fa-book',
-                    ),
-                    array(
-                        'name' => '在线插件',
-                        'uri' => 'api/cjonline',
-                        'icon' => 'fa fa-plug',
-                    ),
-                    array(
-                        'name' => '模板大全',
-                        'uri' => 'api/mbonline',
-                        'icon' => 'fa fa-code',
-                    ),
-                    array(
-                        'name' => '功能模块',
-                        'uri' => 'api/mkonline',
-                        'icon' => 'fa fa-cogs',
                     ),
                 )
             ),

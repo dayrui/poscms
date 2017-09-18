@@ -26,110 +26,22 @@ class Site extends M_Controller {
      * 切换
      */
     public function select() {
-	
-		$id	= (int)$this->input->post('id');
-		if (!isset($this->site_info[$id])) {
-            exit(dr_json(0, fc_lang('域名配置文件中站点(#%s)不存在', $id)));
-        }
 
-		$this->session->set_userdata('siteid', $id); // 保存Session
-		exit(dr_json(1, fc_lang('成功切换到站点[%s]，正在刷新页面...', $this->site_info[$id]['SITE_NAME']), $id));
 	}
 
     /**
      * 管理
      */
     public function index() {
-	
-		if (IS_POST) {
-			$ids = $this->input->post('ids');
-			if (!$ids) {
-                exit(dr_json(0, fc_lang('您还没有选择呢')));
-            }
-			$_data = $this->input->post('data');
-			foreach ($ids as $id) {
-                if ($this->db->where('id<>', (int)$id)->where('domain', $_data[$id]['domain'])->count_all_results('site')) {
-                    exit(dr_json(0, fc_lang('域名【%s】已经被使用了', $_data[$id]['domain'])));
-                }
-				$this->db->where('id', (int)$id)->update('site', $_data[$id]);
-			}
-            $this->site_model->cache();
-            $this->system_log('修改网站站点【#'.@implode(',', $ids).'】'); // 记录日志
-			exit(dr_json(1, fc_lang('操作成功')));
-		}
 
-		$this->template->assign('list', $this->site_model->get_site_data());
-		$this->template->display('site_index.html');
+            $this->config();
 	}
 	
 	/**
      * 添加
      */
     public function add() {
-	
-		if (IS_POST) {
-			$this->load->library('dconfig');
-			$data = $this->input->post('data', TRUE);
-			$domain	= require WEBPATH.'config/domain.php';
-			if (!$data['name']) {
-                exit(dr_json(0, '', 'name'));
-            } elseif (!preg_match('/[\w-_\.]+\.[\w-_\.]+/i', $data['domain'])) {
-                exit(dr_json(0, '', 'domain'));
-            } elseif (in_array($data['domain'], $domain)) {
-                exit(dr_json(0, fc_lang('%s已经存在', $data['domain']), 'domain'));
-            } elseif ($this->db->where('domain', $data['domain'])->count_all_results('site')) {
-                exit(dr_json(0, fc_lang('域名【%s】已经被使用了', $data['domain']), 'domain'));
-            }
-			// 初始化网站配置
-			$cfg['SITE_NAME'] = $data['name'];
-			$cfg['SITE_DOMAIN'] = $data['domain'];
-			$cfg['SITE_DOMAINS'] = '';
-			$cfg['SITE_TIMEZONE'] = '8';
-			$cfg['SITE_LANGUAGE'] = 'zh-cn';
-			$cfg['SITE_TIME_FORMAT'] = 'Y-m-d H:i';
-			// 入库
-			$data['setting'] = $cfg;
-			$id	= $this->site_model->add_site($data);
-			if (!$id) {
-                exit(dr_json(0, dr_fc_lang('数据异常，入库失败')));
-            }
-            /*
-			if ($id > 1) {
-				// 创建静态生成文件夹
-				$html = WEBPATH.'html/'.$id.'/';
-				dr_mkdirs($html);
-				file_put_contents($html.'index.php', "<?php
-require dirname(dirname(dirname(__FILE__))).'/index.php';");
-				// 创建ucenter接口文件
-				dr_mkdirs($html.'api/');
-				file_put_contents($html.'api/uc.php', "<?php
-require dirname(dirname(dirname(dirname(__FILE__)))).'/api/uc.php';;");
-			}*/
-			// 安装站点时执行的SQL
-			if (is_file(WEBPATH.'cache/install/site/install.sql')
-				&& $sql = file_get_contents(WEBPATH.'cache/install/site/install.sql')) {
-				$this->sql_query(str_replace(
-					array('{dbprefix}', '{siteid}'),
-					array($this->db->dbprefix, $id),
-					$sql
-				));
-			}
-			// 保存域名
-			$domain[$data['domain']] = $id;
-			$size = $this->dconfig->file(WEBPATH.'config/site/'.$id.'.php')->note('站点配置文件')->space(32)->to_require_one($this->site_model->config, $cfg);
-			if (!$size) {
-                exit(dr_json(0, fc_lang('网站域名文件创建失败，请检查config目录权限')));
-            }
-			$size = $this->dconfig->file(WEBPATH.'config/domain.php')->note('站点域名文件')->space(32)->to_require_one($domain);
-			if (!$size) {
-                exit(dr_json(0, fc_lang('站点配置文件创建失败，请检查config目录权限')));
-            }
-            $this->site_model->cache();
-            $this->system_log('添加网站站点【#'.$id.'】'.$data['name']); // 记录日志
-			exit(dr_json(1, fc_lang('操作成功')));
-		} else {
-			$this->template->display('site_add.html');
-		}
+
     }
 	
 	/**
@@ -262,51 +174,7 @@ require dirname(dirname(dirname(dirname(__FILE__)))).'/api/uc.php';;");
      * 删除
      */
     public function del() {
-		$id = (int)$this->input->get('id');
-		if (!$this->site_info[$id]) {
-            $this->admin_msg(fc_lang('站点不存在，请尝试更新一次缓存'));
-        } elseif ($id == 1) {
-            $this->admin_msg(fc_lang('主站点不能删除'));
-        }
-		// 卸载模块
-		$module = $this->db->get('module')->result_array();
-		if ($module) {
-			$this->load->model('module_model');
-			foreach ($module as $t) {
-				$site = dr_string2array($t['site']);
-				if (isset($site[$id])) {
-					$this->module_model->uninstall($t['id'], $t['dirname'], $id, count($site));
-				}
-			}
-		}
-        // 删除相关表
-		foreach (array(
-		    'page', 'form', 'remote', 'block', 'navigator', 'weixin', 'weixin_keyword', 'weixin_menu',
-		    'tag', 'weixin_follow', 'weixin_group', 'weixin_material_file', 'weixin_material_image',
-		    'weixin_material_news', 'weixin_material_text', 'weixin_message', 'weixin_user',
-            'share_category', 'share_extend_index', 'share_index') as $table) {
-            $this->db->query('DROP TABLE IF EXISTS `'.$this->db->dbprefix($id.'_'.$table).'`');
-        }
-		// 删除站点
-		$this->db->delete('site', 'id='.$id);
-        // 删除字段
-		$this->db->where('relatedid', $id)->where('relatedname', 'page')->delete('field');
-		// 删除该站配置
-		unlink(WEBPATH.'config/site/'.$id.'.php');
-		// 删除该站附件
-		$this->load->model('attachment_model');
-		$this->attachment_model->delete_for_site($id);
-		// 执行的SQL
-		if (is_file(WEBPATH.'cache/install/site/uninstall.sql')
-			&& $sql = file_get_contents(WEBPATH.'cache/install/site/uninstall.sql')) {
-			$this->sql_query(str_replace(
-				array('{dbprefix}', '{siteid}'),
-				array($this->db->dbprefix, $id),
-				$sql
-			));
-		}
-        $this->system_log('删除网站站点【#'.$id.'】'); // 记录日志
-		$this->admin_msg(fc_lang('操作成功，正在刷新...'), dr_url('site/index'), 1);
+
     }
 	
 	/**
