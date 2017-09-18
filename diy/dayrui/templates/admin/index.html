@@ -356,28 +356,6 @@
                     </a>
                 </li>
 
-                {if $admin.usermenu}
-                <li  class="hidden-480 dropdown dropdown-extended dropdown-notification">
-                    <a href="javascript:;" class="dropdown-toggle popovers top-link" data-container="body" data-trigger="hover" data-placement="bottom" data-content="{fc_lang('快捷菜单')}" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
-                        <i class="fa fa-paper-plane"></i>
-                    </a>
-
-                    <ul class="dropdown-menu">
-                        <li>
-                            <ul class="dropdown-menu-list scroller" style="height:400px;" data-handle-color="#637283">
-                                {loop $admin.usermenu $t}
-                                <li>
-                                    <a style="padding: 8px 15px 8px;" href="{$t.url}" target="right"><span class="details"> {fc_lang($t.name)} </span></a>
-                                </li>
-                                {/loop}
-
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-                {/if}
-
-
 
                 <li class="dropdown dropdown-dark">
                     <a class="dropdown-toggle popovers top-link" data-container="body" data-trigger="hover" data-placement="bottom" data-content="{fc_lang('更新全站缓存')}" href="{dr_url('home/cache')}" target="right"><i class="icon-refresh"></i></a>
@@ -403,6 +381,10 @@
 
                         <li><a href="{dr_url('home/dbcache')}" target="right"><i class="fa fa-database"></i> {fc_lang('更新表结构')}</a></li>
                         <li><a href="{dr_url('home/cache')}" target="right"><i class="fa fa-refresh"></i> {fc_lang('更新全站缓存')}</a></li>
+                        <li class="divider"> </li>
+                        <li><a href="http://www.poscms.net" target="_blank"><i class="fa fa-code"></i> {fc_lang('官方网站')}</a></li>
+                        <li><a href="http://www.ci-bbs.com/poscms/" target="_blank"><i class="fa fa-comments"></i> {fc_lang('技术论坛')}</a></li>
+                        <li><a href="http://help.poscms.net" target="_blank"><i class="fa fa-book"></i> {fc_lang('帮助手册')}</a></li>
                    </ul>
                 </li>
             </ul>

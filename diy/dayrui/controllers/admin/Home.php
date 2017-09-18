@@ -278,7 +278,7 @@ class Home extends M_Controller {
         }
 
         // 
-        $notice = $this->db->query('select * from `'.$this->db->dbprefix('admin_notice').'` where ((`to_uid`='.$this->uid.') or (`to_rid`='.$this->member['adminid'].') or (`to_uid`=0 and `to_rid`=0)) and `status`<>3 order by `status` asc, `inputtime` desc')->result_array();
+        $notice = $this->db->query('select * from `'.$this->db->dbprefix('admin_notice').'` where ((`to_uid`='.$this->uid.') or (`to_rid`='.$this->member['adminid'].') or (`to_uid`=0 and `to_rid`=0)) and `status`<>3 order by `status` asc, `inputtime` desc limit 10')->result_array();
 
         $this->template->assign(array(
             'ip' => $ip,

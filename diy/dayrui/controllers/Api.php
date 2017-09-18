@@ -44,25 +44,7 @@ class Api extends M_Controller {
      */
     public function poster_show() {
 
-        if (!dr_is_app('adm')) {
-            $this->msg('广告插件未安装');
-        }
 
-        $id = (int)$this->input->get('id');
-        $data = $this->db->where('id', $id)->get(SITE_ID.'_poster')->row_array();
-        if ($data) {
-            $value = dr_string2array($data['value']);
-            if ($value['url']) {
-                $this->db->where('id', $id)->update(SITE_ID.'_poster', array(
-                    'clicks' => $data['clicks'] + 1
-                ));
-                redirect($value['url'], 'refresh');
-            } else {
-                $this->msg('此广告没有链接地址');
-            }
-        } else {
-            $this->msg('广告信息不存在或者已过期');
-        }
 
     }
     /**
@@ -70,10 +52,6 @@ class Api extends M_Controller {
      */
     public function poster() {
 
-        $id = (int)$this->input->get('id');
-        $html = dr_poster($id);
-        $html = addslashes(str_replace(array("\r", "\n", "\t", chr(13)), array('', '', '', ''), $html));
-        echo 'document.write("'.$html.'");';
 
     }
 
